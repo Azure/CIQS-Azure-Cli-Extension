@@ -1,0 +1,21 @@
+Metadata-Version: 1.1
+Name: CIQS-CLI-EXTENSION
+Version: 0.0.1
+Summary: An Azure CLI Extension for CIQS.
+Home-page: https://quickstart.azure.ai
+Author: Microsoft
+Author-email: ciqsoncall@microsoft.com
+License: MIT
+Description: An Azure CLI Extension for CIQS (Cloud Inteligence Quick Start).
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: System Administrators
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: License :: OSI Approved :: MIT License
