@@ -1,4 +1,7 @@
 
+# Description
+This repository contains the implementation of CIQS(Cloud Intelligence Quickstart) Azure Cli extension. It help AI solution authoring and provisioning platform (a.k.a CIQS) reach out to a broader set of customers, including data scientists, data engineers, developers and ISVs.
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
