@@ -23,16 +23,16 @@ def locations(cmd):
 def listDeployments(cmd, subscription=None):
     print('To be implemented')
 
-def createDeployment(cmd):
+def createDeployment(cmd, deploymentObj, subscription=None):
     print('To be implemented')
 
-def deployDeployment(cmd):
+def deployDeployment(cmd, deploymentId, subscription=None):
     print('To be implemented')
 
-def viewDeployment(cmd):
+def viewDeployment(cmd, deploymentId, subscription=None):
     print('To be implemented')
 
-def deleteDeployment(cmd):
+def deleteDeployment(cmd, deploymentId, subscription=None):
     print('To be implemented')
 
 # group ciqs gallery
@@ -40,5 +40,5 @@ def deleteDeployment(cmd):
 def listGallery(cmd):
     print('To be implemented')
 
-def getTemplateFromGallery(cmd):
+def getTemplateFromGallery(cmd, templateId):
     print('To be implemented')
