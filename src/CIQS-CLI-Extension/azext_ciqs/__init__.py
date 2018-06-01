@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# 
+# Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
 from knack.help_files import helps
@@ -28,9 +28,9 @@ class CiqsCommandsLoader(AzCommandsLoader):
             g.custom_command('view', 'viewDeployment')
             g.custom_command('delete', 'deleteDeployment')
 
-        with self.command_group('ciqs gallery') as g:
-            g.custom_command('list', 'listGallery')
-            g.custom_command('view', 'getTemplateFromGallery')
+        with self.command_group('ciqs template') as g:
+            g.custom_command('list', 'listTemplates')
+            g.custom_command('view', 'getTemplate')
             g.custom_command('locations', 'locations')
 
         return self.command_table

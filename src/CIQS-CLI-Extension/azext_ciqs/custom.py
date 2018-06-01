@@ -37,8 +37,8 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
 
 # group ciqs gallery
 
-def listGallery(cmd):
+def listTemplates(cmd):
     print('To be implemented')
 
-def getTemplateFromGallery(cmd, templateId):
+def getTemplate(cmd, templateId):
     print('To be implemented')
