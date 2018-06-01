@@ -8,7 +8,7 @@ from knack.help_files import helps
 from azure.cli.core import AzCommandsLoader
 from azure.cli.core.commands import CliCommandType
 
-#import azext_ciqs.helps
+import azext_ciqs.helps
 
 
 class CiqsCommandsLoader(AzCommandsLoader):
@@ -19,9 +19,21 @@ class CiqsCommandsLoader(AzCommandsLoader):
         super(CiqsCommandsLoader, self).__init__(cli_ctx=cli_ctx, custom_command_type=custom_type)
 
     def load_command_table(self, args):
-        with self.command_group('ciqs') as g:
-            g.custom_command('locations' 'locations')
-        return self.command_Table
+        #with self.command_group('ciqs') as g:
+
+        with self.command_group('ciqs deployment') as g:
+            g.custom_command('list', 'listDeployments')
+            g.custom_command('create', 'createDeployment')
+            g.custom_command('deploy', 'deployDeployment')
+            g.custom_command('view', 'viewDeployment')
+            g.custom_command('delete', 'deleteDeployment')
+
+        with self.command_group('ciqs gallery') as g:
+            g.custom_command('list', 'listGallery')
+            g.custom_command('view', 'getTemplateFromGallery')
+            g.custom_command('locations', 'locations')
+
+        return self.command_table
 
     def load_arguments(self, _):
         pass

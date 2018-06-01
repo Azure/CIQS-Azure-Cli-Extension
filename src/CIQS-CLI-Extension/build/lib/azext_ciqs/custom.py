@@ -14,5 +14,31 @@ from azure.cli.core.util import in_cloud_console
 
 logger = get_logger(__name__)
 
+# group ciqs
 def locations(cmd):
+    print('To be implemented')
+
+# group ciqs deployments
+
+def listDeployments(cmd, subscription=None):
+    print('To be implemented')
+
+def createDeployment(cmd, deploymentObj, subscription=None):
+    print('To be implemented')
+
+def deployDeployment(cmd, deploymentId, subscription=None):
+    print('To be implemented')
+
+def viewDeployment(cmd, deploymentId, subscription=None):
+    print('To be implemented')
+
+def deleteDeployment(cmd, deploymentId, subscription=None):
+    print('To be implemented')
+
+# group ciqs gallery
+
+def listGallery(cmd):
+    print('To be implemented')
+
+def getTemplateFromGallery(cmd, templateId):
     print('To be implemented')
