@@ -51,17 +51,17 @@ helps['ciqs deployment delete'] = """
 
 # gallery
 
-helps['ciqs gallery'] = """
+helps['ciqs template'] = """
     type: group
-    short-summary: Manage gallery for CIQS
+    short-summary: View public templates for CIQS (Cloud Inteligent Quick Start)
 """
 
-helps['ciqs gallery list'] = """
+helps['ciqs template list'] = """
     type: command
     short-summary: List all templates in the public gallery
 """
 
-helps['ciqs gallery view'] = """
+helps['ciqs template view'] = """
     type: command
     short-summary: View a specific template in the gallery
 """
