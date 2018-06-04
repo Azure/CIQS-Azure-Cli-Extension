@@ -1,4 +1,5 @@
- # Description
+# Description
+
 This repository contains the implementation of CIQS(Cloud Intelligence Quickstart) Azure Cli extension. It help AI solution authoring and provisioning platform (a.k.a CIQS) reach out to a broader set of customers, including data scientists, data engineers, developers and ISVs.
 
 # Contributing
@@ -15,18 +16,28 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
+# Depdendencies
+
+* Azure CLI 2.0 (install instructions [here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
+* Python 2 or Python 3
+
 # Build Instructions
 
-In src/CIQS-CLI-Extension run the following command:
+Navigate to src/CIQS-CLI-Extension.
+Run the following command:
 ```
 python setup.py bdist_wheel
 ```
 This will create a `dist` directory containing your `.whl` extension.
+The `.whl` file will be used to install the extension.
 
 # Install Instructions
-In the Azure CLI run the following command:
+
+Navigate to src/CIQS-CLI-Extension.
+
+Run the following command where "FILENAME.whl" is the file generated when building:
 ```
-az extension add --source ~/location_of_wheel_file/FILENAME.whl
+az extension add --source ./dist/FILENAME.whl
 ```
 See https://docs.microsoft.com/en-us/cli/azure/azure-cli-extensions-overview?view=azure-cli-latest for details of installing extensions.
 
