@@ -43,7 +43,6 @@ def listDeployments(cmd, subscription=None):
 
     response = responseStream.read().decode('utf-8')
     responseJSON = json.loads(response)
-    #print(json.dumps(responseJSON, sort_keys=True, indent=4, separators=(',', ': ')))
     return responseJSON
 
 def createDeployment(cmd, deploymentObj, subscription=None):
