@@ -33,15 +33,18 @@ def listDeployments(cmd, subscription=None):
     
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
+
     conn = http.client.HTTPSConnection(HOST, 443)
     path = '/api/deployments/' + subscription
     conn.putrequest('GET', path)
     conn.putheader('Authorization', auth_token[0][0] + ' ' + auth_token[0][1])
     conn.endheaders()
     responseStream = conn.getresponse()
+
     response = responseStream.read().decode('utf-8')
     responseJSON = json.loads(response)
-    print(json.dumps(responseJSON, sort_keys=True, indent=4, separators=(',', ': ')))
+    #print(json.dumps(responseJSON, sort_keys=True, indent=4, separators=(',', ': ')))
+    return responseJSON
 
 def createDeployment(cmd, deploymentObj, subscription=None):
     print('To be implemented')
