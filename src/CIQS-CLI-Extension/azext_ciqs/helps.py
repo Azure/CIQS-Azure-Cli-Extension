@@ -12,11 +12,6 @@ helps['ciqs'] = """
     short-summary: Manage CIQS deployments and gallery
 """
 
-helps['ciqs locations'] = """
-    type: command
-    short-summary: List available locations for templates
-"""
-
 # deployment
 
 helps['ciqs deployment'] = """
@@ -64,4 +59,9 @@ helps['ciqs template list'] = """
 helps['ciqs template view'] = """
     type: command
     short-summary: View a specific template in the gallery
+"""
+
+helps['ciqs template locations'] = """
+    type: command
+    short-summary: List available locations for templates
 """

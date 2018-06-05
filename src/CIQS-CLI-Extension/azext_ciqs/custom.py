@@ -17,13 +17,26 @@ import http.client
 
 logger = get_logger(__name__)
 
+#---------------------------------------------------------------------------------------------
+# group ciqs
+#---------------------------------------------------------------------------------------------
+
 HOST = 'ciqs-api-westus.azurewebsites.net'
 
-# group ciqs
-def locations(cmd):
-    print('To be implemented')
+def _makeAPICall(cmd, method, path, auth_token=None):
+    conn = http.client.HTTPSConnection(HOST, 443)
+    conn.putrequest(method, path)
+    if not (auth_token is None):
+        conn.putheader('Authorization', auth_token[0][0] + ' ' + auth_token[0][1])
+    conn.endheaders()
+    responseStream = conn.getresponse()
+    response = responseStream.read().decode('utf-8')
+    responseJSON = json.loads(response)
+    return responseJSON
 
-# group ciqs deployments
+#---------------------------------------------------------------------------------------------
+# sub-group ciqs deployments
+#---------------------------------------------------------------------------------------------
 
 def listDeployments(cmd, subscription=None):
     from azure.cli.core.commands.client_factory import get_subscription_id
@@ -31,15 +44,8 @@ def listDeployments(cmd, subscription=None):
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    conn = http.client.HTTPSConnection(HOST, 443)
     path = '/api/deployments/' + subscription
-    conn.putrequest('GET', path)
-    conn.putheader('Authorization', auth_token[0][0] + ' ' + auth_token[0][1])
-    conn.endheaders()
-    responseStream = conn.getresponse()
-    response = responseStream.read().decode('utf-8')
-    responseJSON = json.loads(response)
-    return responseJSON
+    return _makeAPICall(cmd, 'GET', path, auth_token=auth_token)
 
 def createDeployment(cmd, deploymentObj, subscription=None):
     print('To be implemented')
@@ -53,15 +59,8 @@ def viewDeployment(cmd, deploymentId, subscription=None):
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    conn = http.client.HTTPSConnection(HOST, 443)
     path = '/api/deployments/' + subscription + '/' + deploymentId
-    conn.putrequest('GET', path)
-    conn.putheader('Authorization', auth_token[0][0] + ' ' + auth_token[0][1])
-    conn.endheaders()
-    responseStream = conn.getresponse()
-    response = responseStream.read().decode('utf-8')
-    responseJSON = json.loads(response)
-    return responseJSON
+    return _makeAPICall(cmd, 'GET', path, auth_token=auth_token)
 
 def deleteDeployment(cmd, deploymentId, subscription=None):
     from azure.cli.core.commands.client_factory import get_subscription_id
@@ -69,20 +68,18 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    conn = http.client.HTTPSConnection(HOST, 443)
     path = '/api/deployments/' + subscription + '/' + deploymentId
-    conn.putrequest('DELETE', path)
-    conn.putheader('Authorization', auth_token[0][0] + ' ' + auth_token[0][1])
-    conn.endheaders()
-    responseStream = conn.getresponse()
-    response = responseStream.read().decode('utf-8')
-    responseJSON = json.loads(response)
-    return responseJSON
+    return _makeAPICall(cmd, 'DELETE', path, auth_token=auth_token)
 
-# group ciqs gallery
+#---------------------------------------------------------------------------------------------
+# sub-group ciqs gallery
+#---------------------------------------------------------------------------------------------
 
 def listTemplates(cmd):
     print('To be implemented')
 
 def getTemplate(cmd, templateId):
+    print('To be implemented')
+
+def locations(cmd):
     print('To be implemented')
