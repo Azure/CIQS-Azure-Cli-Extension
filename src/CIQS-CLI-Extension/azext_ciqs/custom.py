@@ -14,7 +14,6 @@ from azure.cli.core.util import in_cloud_console
 
 import json
 import http.client
-import sys
 
 logger = get_logger(__name__)
 
