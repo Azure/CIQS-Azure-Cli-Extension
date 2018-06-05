@@ -27,20 +27,16 @@ def locations(cmd):
 
 def listDeployments(cmd, subscription=None):
     from azure.cli.core.commands.client_factory import get_subscription_id
-
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
-    
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-
     conn = http.client.HTTPSConnection(HOST, 443)
     path = '/api/deployments/' + subscription
     conn.putrequest('GET', path)
     conn.putheader('Authorization', auth_token[0][0] + ' ' + auth_token[0][1])
     conn.endheaders()
     responseStream = conn.getresponse()
-
     response = responseStream.read().decode('utf-8')
     responseJSON = json.loads(response)
     return responseJSON
@@ -53,26 +49,35 @@ def deployDeployment(cmd, deploymentId, subscription=None):
 
 def viewDeployment(cmd, deploymentId, subscription=None):
     from azure.cli.core.commands.client_factory import get_subscription_id
-
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
-
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-
     conn = http.client.HTTPSConnection(HOST, 443)
     path = '/api/deployments/' + subscription + '/' + deploymentId
     conn.putrequest('GET', path)
     conn.putheader('Authorization', auth_token[0][0] + ' ' + auth_token[0][1])
     conn.endheaders()
     responseStream = conn.getresponse()
-
     response = responseStream.read().decode('utf-8')
     responseJSON = json.loads(response)
     return responseJSON
 
 def deleteDeployment(cmd, deploymentId, subscription=None):
-    print('To be implemented')
+    from azure.cli.core.commands.client_factory import get_subscription_id
+    if subscription is None:
+        subscription = get_subscription_id(cmd.cli_ctx)
+    profile = Profile(cli_ctx=cmd.cli_ctx)
+    auth_token = profile.get_raw_token(subscription=subscription)
+    conn = http.client.HTTPSConnection(HOST, 443)
+    path = '/api/deployments/' + subscription + '/' + deploymentId
+    conn.putrequest('DELETE', path)
+    conn.putheader('Authorization', auth_token[0][0] + ' ' + auth_token[0][1])
+    conn.endheaders()
+    responseStream = conn.getresponse()
+    response = responseStream.read().decode('utf-8')
+    responseJSON = json.loads(response)
+    return responseJSON
 
 # group ciqs gallery
 
