@@ -9,14 +9,15 @@ from knack.help_files import helps
 
 helps['ciqs'] = """
     type: group
-    short-summary: Manage CIQS deployments and gallery
+    short-summary: Manage CIQS(Cloud Intelligence Quickstart) deployments and gallery
 """
 
+# --------------------------------------------------------------------------------------------
 # deployment
-
+# --------------------------------------------------------------------------------------------
 helps['ciqs deployment'] = """
     type: group
-    short-summary: Manage deployments for CIQS
+    short-summary: Manage deployments for CIQS(Cloud Intelligence Quickstart)
 """
 
 helps['ciqs deployment list'] = """
@@ -44,11 +45,12 @@ helps['ciqs deployment delete'] = """
     short-summary: Delete a specific deployment
 """
 
+# --------------------------------------------------------------------------------------------
 # gallery
-
+# --------------------------------------------------------------------------------------------
 helps['ciqs template'] = """
     type: group
-    short-summary: View public templates for CIQS (Cloud Inteligent Quick Start)
+    short-summary: View public templates for CIQS(Cloud Inteligent Quick Start)
 """
 
 helps['ciqs template list'] = """
@@ -63,5 +65,5 @@ helps['ciqs template view'] = """
 
 helps['ciqs template locations'] = """
     type: command
-    short-summary: List available locations for templates
+    short-summary: List all available locations in a subscription for a solution template
 """
