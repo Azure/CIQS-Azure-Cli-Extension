@@ -17,12 +17,13 @@ API_BASE_ENDPOINT = '/api/'
 DEPLOYMENT_ENDPOINT = API_BASE_ENDPOINT + 'deployments/'
 GALLERY_ENDPOINT = API_BASE_ENDPOINT + 'gallery/'
 LOCATIONS_ENDPOINT = API_BASE_ENDPOINT + 'locations/'
+TEST_ENVIRONMENT_VAR = 'CIQS_CLI_TEST'
 
 def makeAPICall(cmd, method, path, auth_token=None):
     # How do you add a config file to an Azure CLI extension?
     # Would like to take HOST info from config file.
     host = HOST
-    if os.getenv('CIQS_CLI_TEST', False) == "True":
+    if os.getenv(TEST_ENVIRONMENT_VAR, False) == "True":
         host = TEST_HOST
         print('Using test api...')
     conn = http.client.HTTPSConnection(host, http.client.HTTPS_PORT)
