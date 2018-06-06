@@ -17,7 +17,6 @@ from . import api
 import json
 import http.client
 
-
 logger = get_logger(__name__)
 
 #---------------------------------------------------------------------------------------------

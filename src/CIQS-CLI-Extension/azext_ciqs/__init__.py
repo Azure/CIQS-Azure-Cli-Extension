@@ -10,7 +10,6 @@ from azure.cli.core.commands import CliCommandType
 
 import azext_ciqs.helps
 
-
 class CiqsCommandsLoader(AzCommandsLoader):
 
     def __init__(self, cli_ctx=None):
