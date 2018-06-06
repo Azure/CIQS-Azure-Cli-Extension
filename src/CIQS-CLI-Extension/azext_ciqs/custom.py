@@ -12,8 +12,8 @@ from knack.util import CLIError
 from azure.cli.core._profile import Profile
 from azure.cli.core.util import in_cloud_console
 from azure.cli.core.commands.client_factory import get_subscription_id
-from . import api
 
+from . import api
 import json
 import http.client
 

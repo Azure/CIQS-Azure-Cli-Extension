@@ -9,6 +9,7 @@ from azure.cli.core import AzCommandsLoader
 from azure.cli.core.commands import CliCommandType
 
 import azext_ciqs.helps
+import azext_ciqs.format
 
 class CiqsCommandsLoader(AzCommandsLoader):
 
@@ -21,15 +22,15 @@ class CiqsCommandsLoader(AzCommandsLoader):
         #with self.command_group('ciqs') as g:
 
         with self.command_group('ciqs deployment') as g:
-            g.custom_command('list', 'listDeployments')
+            g.custom_command('list', 'listDeployments', table_transformer=format.transform_deploymentList)
             g.custom_command('create', 'createDeployment')
             g.custom_command('deploy', 'deployDeployment')
             g.custom_command('view', 'viewDeployment')
             g.custom_command('delete', 'deleteDeployment')
 
         with self.command_group('ciqs template') as g:
-            g.custom_command('list', 'listTemplates')
-            g.custom_command('view', 'getTemplate')
+            g.custom_command('list', 'listTemplates', table_transformer=format.transform_templateList)
+            g.custom_command('view', 'getTemplate', table_transformer=format.transform_templateView)
             g.custom_command('locations', 'listLocations')
 
         return self.command_table

@@ -5,8 +5,6 @@
 
 from knack.util import CLIError
 
-import configparser
-
 import json
 import http.client
 import os
