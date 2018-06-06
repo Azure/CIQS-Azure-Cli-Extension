@@ -39,4 +39,3 @@ def transform_deploymentListItem(result):
 
 def transform_deploymentList(deployment_list):
     return [transform_deploymentListItem(i) for i in deployment_list]
-    
