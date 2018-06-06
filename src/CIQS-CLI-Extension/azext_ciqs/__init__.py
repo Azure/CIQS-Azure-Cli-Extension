@@ -10,7 +10,6 @@ from azure.cli.core.commands import CliCommandType
 
 import azext_ciqs.helps
 
-
 class CiqsCommandsLoader(AzCommandsLoader):
 
     def __init__(self, cli_ctx=None):
@@ -31,7 +30,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
         with self.command_group('ciqs template') as g:
             g.custom_command('list', 'listTemplates')
             g.custom_command('view', 'getTemplate')
-            g.custom_command('locations', 'locations')
+            g.custom_command('locations', 'listLocations')
 
         return self.command_table
 
