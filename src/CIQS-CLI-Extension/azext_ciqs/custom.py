@@ -72,7 +72,7 @@ def getTemplate(cmd, templateId):
     path = api.GALLERY_ENDPOINT + templateId
     return api.makeAPICall(cmd, 'GET', path, auth_token=auth_token)
 
-def locations(cmd, templateId, subscription=None):
+def listLocations(cmd, templateId, subscription=None):
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)

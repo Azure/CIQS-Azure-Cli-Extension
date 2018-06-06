@@ -31,7 +31,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
         with self.command_group('ciqs template') as g:
             g.custom_command('list', 'listTemplates')
             g.custom_command('view', 'getTemplate')
-            g.custom_command('locations', 'locations')
+            g.custom_command('locations', 'listLocations')
 
         return self.command_table
 
