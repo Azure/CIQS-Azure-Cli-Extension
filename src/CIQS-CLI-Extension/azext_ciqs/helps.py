@@ -66,4 +66,6 @@ helps['ciqs template view'] = """
 helps['ciqs template locations'] = """
     type: command
     short-summary: List all available locations in a subscription for a solution template
+    long-summary: >
+        These locations can be used when deploying a solution for the specified template.
 """
