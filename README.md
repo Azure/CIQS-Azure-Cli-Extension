@@ -35,9 +35,9 @@ The `.whl` file will be used to install the extension.
 
 Navigate to src/CIQS-CLI-Extension.
 
-Run the following command where "FILENAME.whl" is the file generated when building:
+Run the following command where "{FILENAME}.whl" is the file generated when building:
 ```
-az extension add --source ./dist/FILENAME.whl
+az extension add --source ./dist/{FILENAME}.whl
 ```
 See https://docs.microsoft.com/en-us/cli/azure/azure-cli-extensions-overview?view=azure-cli-latest for details of installing extensions.
 

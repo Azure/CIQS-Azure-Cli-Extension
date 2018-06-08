@@ -12,8 +12,8 @@ from knack.util import CLIError
 from azure.cli.core._profile import Profile
 from azure.cli.core.util import in_cloud_console
 from azure.cli.core.commands.client_factory import get_subscription_id
-from . import api
 
+from azext_ciqs import api
 import json
 import http.client
 
@@ -28,53 +28,95 @@ logger = get_logger(__name__)
 #---------------------------------------------------------------------------------------------
 
 def listDeployments(cmd, subscription=None):
+    """Lists the deployments for the supplied subscription. If no subscription
+    is supplied, it will use the default subscription of the current logged in
+    user of the Azure CLI.
+    subscription[optional]: Provides an alternate subscription to use if desired.
+    """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.DEPLOYMENT_ENDPOINT + subscription
-    return api.makeAPICall(cmd, 'GET', path, auth_token=auth_token)
+    return api.makeAPICall('GET', path, auth_token=auth_token)
 
-def createDeployment(cmd, deploymentObj, subscription=None):
-    raise CLIError('Not Implemented')
+def createDeployment(cmd, name, location, templateId, description=None, parameters=None, solutionStorageConnectionString=None, subscription=None):
+    """Creates a deployment with the specified parameters.
+    name: The name of the deployment. (must be alphanumeric lowercase between 3 to 9 characters beginning with a letter)
+    location: The location to deploy the solution to.
+    templateId: The unique id of the template which the deployment will be bulit from.
+    description[optional]: The optional description of the deployment.
+    parameters[optional]:
+    solutionStorageConnectionString[optional]:
+    subscription[optional]: Provides an alternate subscription to use if desired.
+    """
+    if subscription is None:
+        subscription = get_subscription_id(cmd.cli_ctx)
+    profile = Profile(cli_ctx=cmd.cli_ctx)
+    auth_token = profile.get_raw_token(subscription=subscription)
+    createDeploymentRequest = api.CreateDeploymentRequest(name,
+                                                         location,
+                                                         templateId,
+                                                         subscription,
+                                                         auth_token,
+                                                         description=description,
+                                                         parameters=parameters,
+                                                         solutionStorageConnectionString=solutionStorageConnectionString)
+    return createDeploymentRequest.sendRequest()
 
 def deployDeployment(cmd, deploymentId, subscription=None):
     raise CLIError('Not Implemented')
 
 def viewDeployment(cmd, deploymentId, subscription=None):
+    """Returns details about an existing deployment.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscripton to use if desired.
+    """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
-    return api.makeAPICall(cmd, 'GET', path, auth_token=auth_token)
+    return api.makeAPICall('GET', path, auth_token=auth_token)
 
 def deleteDeployment(cmd, deploymentId, subscription=None):
+    """Deletes a deployment.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscripton to use if desired.
+    """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
-    return api.makeAPICall(cmd, 'DELETE', path, auth_token=auth_token)
+    return api.makeAPICall('DELETE', path, auth_token=auth_token)
 
 #---------------------------------------------------------------------------------------------
 # sub-group ciqs gallery
 #---------------------------------------------------------------------------------------------
 
 def listTemplates(cmd):
+    """Lists templates from the gallery"""
     path = api.GALLERY_ENDPOINT
-    return api.makeAPICall(cmd, 'GET', path)
+    return api.makeAPICall('GET', path)
 
 def getTemplate(cmd, templateId):
+    """Gets details about the specified template from the gallery.
+    templateId: The unique id of the template.
+    """
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token()
     path = api.GALLERY_ENDPOINT + templateId
-    return api.makeAPICall(cmd, 'GET', path, auth_token=auth_token)
+    return api.makeAPICall('GET', path, auth_token=auth_token)
 
 def listLocations(cmd, templateId, subscription=None):
+    """Lists the locations which the specifed templateId may be deployed.
+    templateId: The unique id of the template.
+    subscription[optional]: Provides an alternate subscription to use if desired.
+    """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.LOCATIONS_ENDPOINT + templateId + '/' + subscription
-    return api.makeAPICall(cmd, 'GET', path, auth_token=auth_token)
+    return api.makeAPICall('GET', path, auth_token=auth_token)
