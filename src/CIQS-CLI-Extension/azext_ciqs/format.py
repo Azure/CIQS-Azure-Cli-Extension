@@ -22,6 +22,7 @@ def transform_templateList(template_list):
 def transform_templateView(result):
     """Transforms a single template into a one row table"""
     result = OrderedDict([('Title', result['title']),
+                        ('Template Id', result['id']),
                         ('Category', result['category']),
                         ('Estimated Time', result['estimatedTime']),
                         ('Description', result['description'])])
