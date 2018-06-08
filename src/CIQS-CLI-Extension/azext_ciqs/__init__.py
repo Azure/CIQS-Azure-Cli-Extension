@@ -39,7 +39,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
         
         with self.argument_context('ciqs') as c:
             c.argument('templateId', options_list=('--template-id', '-t'), help='ID of template to use')
-            c.argument('subscription', options_list=('--subscription', '-s'), help='Name or ID of subscription. If none is supplied, the default subscription for the account will be used.', completer=get_subscription_id_list)
+            c.argument('subscription', options_list=('--subscription', '-s'), help='Subscription Id. If none is supplied, the default subscription for the account will be used.', completer=get_subscription_id_list)
 
         with self.argument_context('ciqs deployment') as c:
             c.argument('deploymentId', options_list=('--deployment-id',), help='ID of deployment.')
