@@ -96,6 +96,17 @@ def viewDeployment(cmd, deploymentId, subscription=None):
     path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
     return api.makeAPICall('GET', path, auth_token=auth_token)
 
+def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
+    """Returns the current provisioning step.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscripton to use if desired.
+    """
+    #TODO: Consider changing this to take an optional provisioning step number to show instead of only current.
+    deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
+    currentProvisioningStepNumber = deployment['deployment']['currentProvisioningStep']
+    currentProvisioningStep = deployment['provisioningSteps'][currentProvisioningStepNumber]
+    return currentProvisioningStep
+
 def deleteDeployment(cmd, deploymentId, subscription=None):
     """Deletes a deployment.
     deploymentId: The unique id created at the time the deployment was made.
