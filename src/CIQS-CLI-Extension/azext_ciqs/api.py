@@ -12,7 +12,7 @@ import os
 HOST = 'ciqs-api-westus.azurewebsites.net'
 TEST_HOST = 'ciqs-api-test-westus.azurewebsites.net'
 API_BASE_ENDPOINT = '/api/'
-DEPLOYMENT_ENDPOINT = API_BASE_ENDPOINT + 'deployments/'
+DEPLOYMENT_ENDPOINT = API_BASE_ENDPOINT + 'Deployments/'
 GALLERY_ENDPOINT = API_BASE_ENDPOINT + 'gallery/'
 LOCATIONS_ENDPOINT = API_BASE_ENDPOINT + 'locations/'
 TEST_ENVIRONMENT_VAR = 'CIQS_CLI_TEST'

@@ -11,6 +11,7 @@ from azure.cli.command_modules.profile._completers import get_subscription_id_li
 
 import azext_ciqs.helps
 import azext_ciqs.format
+import azext_ciqs.validators
 
 class CiqsCommandsLoader(AzCommandsLoader):
 
@@ -27,6 +28,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
             g.custom_command('deploy', 'deployDeployment')
             g.custom_command('view', 'viewDeployment')
             g.custom_command('delete', 'deleteDeployment')
+            g.custom_command('send-params', 'sendParameters')
 
         with self.command_group('ciqs template') as g:
             g.custom_command('list', 'listTemplates', table_transformer=format.transform_templateList)
@@ -43,6 +45,9 @@ class CiqsCommandsLoader(AzCommandsLoader):
 
         with self.argument_context('ciqs deployment') as c:
             c.argument('deploymentId', options_list=('--deployment-id',), help='ID of deployment.')
+
+        with self.argument_context('ciqs deployment send-params') as c:
+            c.argument('parameters', options_list=('--parameters',), validator=validators.validate_sendParamters_parameters, help='Parameters in JSON format to send to the deployment.', )
         
         with self.argument_context('ciqs deployment create') as c:
             c.argument('name', options_list=('--name', '-n'), help='Deployment name must be between 3 and 9 characters, start with a lowercase letter, and contain only lowercase letters and numbers.')

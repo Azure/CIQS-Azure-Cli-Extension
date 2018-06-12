@@ -45,6 +45,13 @@ helps['ciqs deployment delete'] = """
     short-summary: Delete a specific deployment
 """
 
+helps['ciqs deployment send-params'] = """
+    type: command
+    short-summary: Sends paramters to the exisiting deployment.
+    long-summery: >
+        This should be used when the deployment status is ActionRequired.
+"""
+
 # --------------------------------------------------------------------------------------------
 # gallery
 # --------------------------------------------------------------------------------------------

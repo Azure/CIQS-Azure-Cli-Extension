@@ -67,6 +67,21 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
 def deployDeployment(cmd, deploymentId, subscription=None):
     raise CLIError('Not Implemented')
 
+def sendParameters(cmd, deploymentId, parameters, subscription=None):
+    """Sends parameters to the existing deployment. This should be used when
+    the deployment status is ActionRequired.
+    deploymentId: The unique id created at the time the deployment was made.
+    parameters: A string in JSON format with key value pairs for the parameters to send.
+    subscription[optional]: Provides an alternate subscription to use if desired.
+    """
+    if subscription is None:
+        subscription = get_subscription_id(cmd.cli_ctx)
+    profile = Profile(cli_ctx=cmd.cli_ctx)
+    auth_token = profile.get_raw_token(subscription=subscription)
+    path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
+    return api.makeAPICall('PUT', path, auth_token=auth_token, refresh_token=True, requestBody=parameters, contentType='application/json')
+
+
 def viewDeployment(cmd, deploymentId, subscription=None):
     """Returns details about an existing deployment.
     deploymentId: The unique id created at the time the deployment was made.
