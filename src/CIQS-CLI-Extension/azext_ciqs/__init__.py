@@ -41,6 +41,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
         with self.argument_context('ciqs') as c:
             c.argument('templateId', options_list=('--template-id', '-t'), help='Unique ID of a solution template')
             c.argument('subscription', options_list=('--subscription', '-s'), help='Subscription Id. If none is supplied, the default subscription for the account will be used.', completer=get_subscription_id_list)
+            c.argument('solutionStorageConnectionString', options_list=('--connection-string',) help='This is the Solution Storage Connection String that is used to access your private gallery.')
 
         with self.argument_context('ciqs deployment') as c:
             c.argument('deploymentId', options_list=('--deployment-id',), help='ID of deployment.')

@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+# TODO: See about making appropriate classes for requests.
+
 from __future__ import print_function
 
 from knack.log import get_logger
