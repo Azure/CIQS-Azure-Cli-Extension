@@ -110,10 +110,10 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
 # sub-group ciqs gallery
 #---------------------------------------------------------------------------------------------
 
-def listTemplates(cmd):
+def listTemplates(cmd, solutionStorageConnectionString=None):
     """Lists templates from the gallery"""
     path = api.GALLERY_ENDPOINT
-    return api.makeAPICall('GET', path)
+    return api.makeAPICall('GET', path, solutionStorageConnectionString=solutionStorageConnectionString)
 
 def getTemplate(cmd, templateId):
     """Gets details about the specified template from the gallery.

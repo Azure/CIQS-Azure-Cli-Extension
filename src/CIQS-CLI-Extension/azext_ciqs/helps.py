@@ -30,11 +30,6 @@ helps['ciqs deployment create'] = """
     short-summary: Create a deployment in a subscription
 """
 
-helps['ciqs deployment deploy'] = """
-    type: command
-    short-summary: Execute a specific deployment
-"""
-
 helps['ciqs deployment view'] = """
     type: command
     short-summary: View a specific deployment details
