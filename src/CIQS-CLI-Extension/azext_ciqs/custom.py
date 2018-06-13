@@ -107,6 +107,11 @@ def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
     currentProvisioningStep = deployment['provisioningSteps'][currentProvisioningStepNumber]
     return currentProvisioningStep
 
+def viewDeploymentStatus(cmd, deploymentId, subscription=None):
+    deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
+    status = deployment['deployment']['status']
+    return status
+
 def deleteDeployment(cmd, deploymentId, subscription=None):
     """Deletes a deployment.
     deploymentId: The unique id created at the time the deployment was made.
@@ -137,7 +142,7 @@ def getTemplate(cmd, templateId):
     path = api.GALLERY_ENDPOINT + templateId
     return api.makeAPICall('GET', path, auth_token=auth_token)
 
-def listLocations(cmd, templateId, subscription=None):
+def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionString=None):
     """Lists the locations which the specifed templateId may be deployed.
     templateId: The unique id of the template.
     subscription[optional]: Provides an alternate subscription to use if desired.
@@ -147,4 +152,4 @@ def listLocations(cmd, templateId, subscription=None):
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.LOCATIONS_ENDPOINT + templateId + '/' + subscription
-    return api.makeAPICall('GET', path, auth_token=auth_token)
+    return api.makeAPICall('GET', path, auth_token=auth_token, solutionStorageConnectionString=solutionStorageConnectionString)

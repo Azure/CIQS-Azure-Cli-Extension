@@ -29,6 +29,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
             g.custom_command('delete', 'deleteDeployment')
             g.custom_command('send-params', 'sendParameters')
             g.custom_command('view-provisioning-step', 'viewCurrentProvisioningStep')
+            g.custom_command('view-status', 'viewDeploymentStatus')
 
         with self.command_group('ciqs template') as g:
             g.custom_command('list', 'listTemplates', table_transformer=format.transform_templateList)
