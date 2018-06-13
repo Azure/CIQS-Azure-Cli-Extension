@@ -101,7 +101,7 @@ def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
     deploymentId: The unique id created at the time the deployment was made.
     subscription[optional]: Provides an alternate subscripton to use if desired.
     """
-    #TODO: Consider changing this to take an optional provisioning step number to show instead of only current.
+    # TODO: Consider changing this to take an optional provisioning step number to show instead of only current.
     deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
     currentProvisioningStepNumber = deployment['deployment']['currentProvisioningStep']
     currentProvisioningStep = deployment['provisioningSteps'][currentProvisioningStepNumber]
@@ -146,6 +146,7 @@ def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionS
     """Lists the locations which the specifed templateId may be deployed.
     templateId: The unique id of the template.
     subscription[optional]: Provides an alternate subscription to use if desired.
+    solutionStorageConnectionString[optional]: Connection string for user's storage account for private solutions.
     """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
