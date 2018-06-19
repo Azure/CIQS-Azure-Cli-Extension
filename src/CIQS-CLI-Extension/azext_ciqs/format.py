@@ -41,3 +41,8 @@ def transform_deploymentListItem(result):
 def transform_deploymentList(deployment_list):
     """Transforms the deployment list into a human readable table"""
     return [transform_deploymentListItem(i) for i in deployment_list]
+
+def transform_deploymentView(result):
+    """Transforms the output of a deployment into human readable format"""
+    result = transform_deploymentListItem(result['deployment'])
+    return result
