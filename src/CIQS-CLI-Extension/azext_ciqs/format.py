@@ -57,3 +57,6 @@ def transform_deploymentParam(result):
 
 def transform_deploymentViewParamsList(param_list):
     return [transform_deploymentParam(i) for i in param_list]
+
+def transform_deploymentViewStatus(result):
+    return OrderedDict([('Status', util.provisioningStatusTransform(result['status']))])
