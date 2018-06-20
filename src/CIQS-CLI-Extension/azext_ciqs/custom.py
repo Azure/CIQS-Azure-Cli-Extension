@@ -16,6 +16,7 @@ from azure.cli.core.util import in_cloud_console
 from azure.cli.core.commands.client_factory import get_subscription_id
 
 from azext_ciqs import api
+from azext_ciqs import validators
 import json
 import http.client
 
@@ -87,6 +88,7 @@ def sendParameters(cmd, deploymentId, parameters, subscription=None):
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
+    validators.validate_sendParameters(cmd, parameters, subscription, deploymentId)
     path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
     return api.makeAPICall('PUT', path, auth_token=auth_token, refresh_token=True, requestBody=parameters, contentType='application/json')
 
