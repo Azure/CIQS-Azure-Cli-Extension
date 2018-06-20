@@ -46,3 +46,14 @@ def transform_deploymentView(result):
     """Transforms the output of a deployment into human readable format"""
     result = transform_deploymentListItem(result['deployment'])
     return result
+
+def transform_deploymentParam(result):
+    """Transforms a paramter into a row for a table"""
+    result = OrderedDict([('Description', result['description']),
+                        ('Name', result['name']),
+                        ('Type', result['type']),
+                        ('Default', result['defaultValue'])])
+    return result
+
+def transform_deploymentViewParamsList(param_list):
+    return [transform_deploymentParam(i) for i in param_list]

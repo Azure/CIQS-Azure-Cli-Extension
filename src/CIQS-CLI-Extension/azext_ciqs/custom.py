@@ -108,6 +108,10 @@ def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
     return currentProvisioningStep
 
 def viewDeploymentStatus(cmd, deploymentId, subscription=None):
+    """Returns the status of the specified deployment.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscription to use if desired.
+    """
     deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
     status = deployment['deployment']['status']
     return status
@@ -123,6 +127,17 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
     return api.makeAPICall('DELETE', path, auth_token=auth_token)
+
+def getDeploymentParameters(cmd, deploymentId, subscription=None):
+    """Gets the parameters required by the user at Action Required status.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscripton to use if desired.
+    """
+    currentProvisioningStep = viewCurrentProvisioningStep(cmd, deploymentId, subscription=subscription)
+    parameters = currentProvisioningStep['parameters']
+    parameters = [parameter for parameter in parameters if parameter['hidden'] != True]
+    return parameters
+
 
 #---------------------------------------------------------------------------------------------
 # sub-group ciqs gallery
