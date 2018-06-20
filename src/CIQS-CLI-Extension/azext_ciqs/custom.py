@@ -114,7 +114,7 @@ def viewDeploymentStatus(cmd, deploymentId, subscription=None):
     """
     deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
     status = deployment['deployment']['status']
-    return status
+    return {'status': status}
 
 def deleteDeployment(cmd, deploymentId, subscription=None):
     """Deletes a deployment.
