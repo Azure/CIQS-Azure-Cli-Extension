@@ -133,7 +133,7 @@ class CreateDeploymentRequest:
 
     def sendRequest(self):
         """Sends the request. Returns the response."""
-        path = DEPLOYMENT_ENDPOINT
+        path = DEPLOYMENT_ENDPOINT + '/' + self.subscription + '/' + self.templateId
         requestBody = self._buildRequestBody()
         return makeAPICall('POST',
                           path,
