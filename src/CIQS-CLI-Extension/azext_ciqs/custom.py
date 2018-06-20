@@ -165,5 +165,5 @@ def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionS
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    path = api.LOCATIONS_ENDPOINT + templateId + '/' + subscription
+    path = api.LOCATIONS_ENDPOINT + subscription + '/' + templateId
     return api.makeAPICall('GET', path, auth_token=auth_token, solutionStorageConnectionString=solutionStorageConnectionString)
