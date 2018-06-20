@@ -73,7 +73,10 @@ def makeAPICall(method, path, auth_token=None, refresh_token=False, requestBody=
     # Handle response if not a 200
     if responseStatus != 200:
         raise CLIError("Error: Response code " + str(responseStatus) + ": " + responseBody)
-    responseBodyJSON = json.loads(responseBody)
+    try:
+        responseBodyJSON = json.loads(responseBody)
+    except json.JSONDecodeError:
+        raise CLIError("Could not decode response from server.")
     return responseBodyJSON
 
 
