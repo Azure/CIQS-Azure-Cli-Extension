@@ -66,8 +66,15 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
                                                          solutionStorageConnectionString=solutionStorageConnectionString)
     return createDeploymentRequest.sendRequest()
 
-def deployDeployment(cmd, deploymentId, subscription=None):
-    raise CLIError('Not Implemented')
+def getDeploymentParameters(cmd, deploymentId, subscription=None):
+    """Gets the parameters required by the user at Action Required status.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscripton to use if desired.
+    """
+    currentProvisioningStep = viewCurrentProvisioningStep(cmd, deploymentId, subscription=subscription)
+    parameters = currentProvisioningStep['parameters']
+    parameters = [parameter for parameter in parameters if parameter['hidden'] != True]
+    return parameters
 
 def sendParameters(cmd, deploymentId, parameters, subscription=None):
     """Sends parameters to the existing deployment. This should be used when
@@ -127,17 +134,6 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
     return api.makeAPICall('DELETE', path, auth_token=auth_token)
-
-def getDeploymentParameters(cmd, deploymentId, subscription=None):
-    """Gets the parameters required by the user at Action Required status.
-    deploymentId: The unique id created at the time the deployment was made.
-    subscription[optional]: Provides an alternate subscripton to use if desired.
-    """
-    currentProvisioningStep = viewCurrentProvisioningStep(cmd, deploymentId, subscription=subscription)
-    parameters = currentProvisioningStep['parameters']
-    parameters = [parameter for parameter in parameters if parameter['hidden'] != True]
-    return parameters
-
 
 #---------------------------------------------------------------------------------------------
 # sub-group ciqs gallery
