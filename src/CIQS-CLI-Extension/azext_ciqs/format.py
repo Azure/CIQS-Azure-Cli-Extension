@@ -52,7 +52,8 @@ def transform_deploymentParam(result):
     result = OrderedDict([('Description', result['description']),
                         ('Name', result['name']),
                         ('Type', result['type']),
-                        ('Default', result['defaultValue'])])
+                        ('Lists Allowed Values', 'Yes' if 'allowedValues' in result else 'No'),
+                        ('Default', result['defaultValue'] if 'defaultValue' in result else '')])
     return result
 
 def transform_deploymentViewParamsList(param_list):
