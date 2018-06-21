@@ -77,13 +77,23 @@ def getDeploymentParameters(cmd, deploymentId, subscription=None):
     parameters = [parameter for parameter in parameters if parameter['hidden'] != True]
     return parameters
 
-def sendParameters(cmd, deploymentId, parameters, subscription=None):
+def sendParameters(cmd, deploymentId, parameters=None, parameterFile=None, subscription=None):
     """Sends parameters to the existing deployment. This should be used when
     the deployment status is ActionRequired.
     deploymentId: The unique id created at the time the deployment was made.
     parameters: A string in JSON format with key value pairs for the parameters to send.
     subscription[optional]: Provides an alternate subscription to use if desired.
     """
+    if parameters is not None and parameterFile is not None:
+        raise CLIError("May not have parameters and a parameters file at the same time.")
+    elif parameterFile is not None:
+        try:
+            with open(parameterFile) as jsonfile:
+                parameters = jsonfile.read()
+        except IOError:
+            raise CLIError("Could not open file.")
+    elif parameters is None and parameterFile is None:
+        parameters = '{}'
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
