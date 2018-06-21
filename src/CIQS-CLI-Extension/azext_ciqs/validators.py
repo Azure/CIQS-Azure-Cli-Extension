@@ -27,7 +27,7 @@ def validate_sendParameters(cmd, parameters, subscription, deploymentId):
     requiredParams = custom.getDeploymentParameters(cmd, deploymentId, subscription=subscription)
     parametersJson = json.loads(parameters)
     for key in parametersJson:
-        for i in range(requiredParams):
-            if requiredParams[i]['name'] == key and requiredParams[i].has_key('allowedValues'):
+        for i in range(0, len(requiredParams)):
+            if requiredParams[i]['name'] == key and 'allowedValues' in requiredParams[i]:
                 if not (parametersJson[key] in requiredParams[i]['allowedValues']):
-                    raise CLIError("Parameter " + parametersJson[key] + " is not an allowed value for " + key + ".")
+                    raise CLIError("Parameter " + str(parametersJson[key]) + " is not an allowed value for " + key + ".")
