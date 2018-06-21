@@ -10,13 +10,10 @@ import json
 from azext_ciqs import custom
 
 def validate_json_arg(arg):
-    print(arg)
     try:
         arg = json.loads(arg)
     except ValueError:
         raise CLIError('Not valid JSON')
-    except:
-        raise CLIError('Unknown Error')
     return arg
 
 def validate_sendParamters_parameters(ns):
@@ -25,6 +22,7 @@ def validate_sendParamters_parameters(ns):
 
 def validate_sendParameters(cmd, parameters, subscription, deploymentId):
     requiredParams = custom.getDeploymentParameters(cmd, deploymentId, subscription=subscription)
+    validate_json_arg(parameters)
     parametersJson = json.loads(parameters)
     for key in parametersJson:
         for i in range(0, len(requiredParams)):
