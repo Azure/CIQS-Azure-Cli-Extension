@@ -10,9 +10,14 @@ When finished with this tutorial, you should be able to do the following tasks:
 
 The CIQS Extension is built into 2 subgroups:
 1. deployment
-   This is used to create, maintain, and delete deployments
+   This group contains commands used to create, manage, and delete deployments
 2. template
-   This is used to view templates used to deploy solutions
+   This group contains commands used to list templates, view template details and list available locations for a template
+
+You can run the following command to see help manuals for the command group or command:
+```Azure CLI
+az ciqs {deployment,template} {commands} -h
+```
 
 **This tutorial assumes you have already installed the Azure CLI and the CIQS extension.**
 
@@ -36,7 +41,7 @@ You can set your default subscription in the Azure CLI.
 
 If your subscription id was 01234567-89ab-cdef-ghij-456789abcdef0, then this would be the command:
 ```Azure CLI
-az account set 01234567-89ab-cdef-0123-456789abcdef0
+az account set -s 01234567-89ab-cdef-0123-456789abcdef0
 ```
 
 By default the CIQS extension will use this subscription.
@@ -52,7 +57,7 @@ This will give the details of each template in the CIQS public gallery.
 
 To see a simplified list in a human readable table, run the following command:
 ```Azure CLI
-az ciqs template -o table
+az ciqs template list -o table
 ```
 This will give the template id, title, and category.
 
@@ -61,16 +66,15 @@ This will give the template id, title, and category.
 We need to know which template we want details with before we can see the details of it.
 We can select any of the templates from the list in the previous section.
 
-For this tutorial we will use Anomaly Detection in Real-time Data Streams.
-Its template id is anomalydetectionpcsv2.
+We will use Anomaly Detection in Real-time Data Streams (templateId: anomalydetectionpcsv2) as an example.
 
 Run the following command to see the details of this template:
 ```Azure CLI
 az ciqs template view --template-id anomalydetectionpcsv2
 ```
 
-This will give us a lot infomation regarding the template.
-In order to deploy a solution with this template, we only need the template id.
+This will give us all metadata of the template.
+To deploy a solution, we only need the template id.
 
 ## Create a CIQS deployment from a template in the CIQS public gallery
 
@@ -81,18 +85,16 @@ Run the following command:
 ```Azure CLI
 az ciqs template locations --template-id anomalydetectionpcsv2
 ```
-This lists all locations for the template to be deployed on.
+This lists all available locations for the template to be deployed to.
 
 We will select a location for the next step.
 
-We need 3 things to create the deployment.
+We need three parameters to create the deployment.
 1. Location
 2. Name
 3. Template
 
-For location we will use "South Central US".
-For name we will use "tutorial1".
-For the template we will use "anomalydetectionpcsv2".
+In this tutorial, we use "South Central US" for location, "tutorial1" as name and "anomalydetectionpcsv2" as the template ID.
 
 To create this deployment, we will run the following command:
 ```Azure CLI
@@ -153,4 +155,4 @@ ciqs deployment delete --deployment-id 1234567890-abcd-efgh-ijkl-mnopqrstuvw
 
 ## Conclusion
 
-Now you have successfully ran CIQS from end to end.
+Now you have successfully deployed a CIQS solution from end to end. Hope you enjoy the tutorial. If you have any question or feedback, please contact [CIQS team](ciqsoncall@microsoft.com).
