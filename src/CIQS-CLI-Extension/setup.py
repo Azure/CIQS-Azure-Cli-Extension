@@ -25,7 +25,6 @@ CLASSIFIERS = [
 ]
 
 DEPENDENCIES = [
-        'azure-cli-core',
     ]
 
 setup(
