@@ -41,3 +41,23 @@ def transform_deploymentListItem(result):
 def transform_deploymentList(deployment_list):
     """Transforms the deployment list into a human readable table"""
     return [transform_deploymentListItem(i) for i in deployment_list]
+
+def transform_deploymentView(result):
+    """Transforms the output of a deployment into human readable format"""
+    result = transform_deploymentListItem(result['deployment'])
+    return result
+
+def transform_deploymentParam(result):
+    """Transforms a paramter into a row for a table"""
+    result = OrderedDict([('Description', result['description']),
+                        ('Name', result['name']),
+                        ('Type', result['type']),
+                        ('Lists Allowed Values', 'Yes' if 'allowedValues' in result else 'No'),
+                        ('Default', result['defaultValue'] if 'defaultValue' in result else '')])
+    return result
+
+def transform_deploymentViewParamsList(param_list):
+    return [transform_deploymentParam(i) for i in param_list]
+
+def transform_deploymentViewStatus(result):
+    return OrderedDict([('Status', util.provisioningStatusTransform(result['status']))])

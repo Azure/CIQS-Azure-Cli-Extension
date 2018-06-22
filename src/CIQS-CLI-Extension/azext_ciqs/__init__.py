@@ -11,6 +11,7 @@ from azure.cli.command_modules.profile._completers import get_subscription_id_li
 
 import azext_ciqs.helps
 import azext_ciqs.format
+import azext_ciqs.validators
 
 class CiqsCommandsLoader(AzCommandsLoader):
 
@@ -24,9 +25,12 @@ class CiqsCommandsLoader(AzCommandsLoader):
         with self.command_group('ciqs deployment') as g:
             g.custom_command('list', 'listDeployments', table_transformer=format.transform_deploymentList)
             g.custom_command('create', 'createDeployment')
-            g.custom_command('deploy', 'deployDeployment')
-            g.custom_command('view', 'viewDeployment')
+            g.custom_command('view', 'viewDeployment', table_transformer=format.transform_deploymentView)
             g.custom_command('delete', 'deleteDeployment')
+            g.custom_command('send-params', 'sendParameters')
+            g.custom_command('view-provisioning-step', 'viewCurrentProvisioningStep')
+            g.custom_command('view-status', 'viewDeploymentStatus', table_transformer=format.transform_deploymentViewStatus)
+            g.custom_command('view-params', 'getDeploymentParameters', table_transformer=format.transform_deploymentViewParamsList)
 
         with self.command_group('ciqs template') as g:
             g.custom_command('list', 'listTemplates', table_transformer=format.transform_templateList)
@@ -40,9 +44,13 @@ class CiqsCommandsLoader(AzCommandsLoader):
         with self.argument_context('ciqs') as c:
             c.argument('templateId', options_list=('--template-id', '-t'), help='Unique ID of a solution template')
             c.argument('subscription', options_list=('--subscription', '-s'), help='Subscription Id. If none is supplied, the default subscription for the account will be used.', completer=get_subscription_id_list)
+            c.argument('solutionStorageConnectionString', options_list=('--connection-string',), help='This is the Solution Storage Connection String that is used to access your private gallery.')
 
         with self.argument_context('ciqs deployment') as c:
             c.argument('deploymentId', options_list=('--deployment-id',), help='ID of deployment.')
+
+        with self.argument_context('ciqs deployment send-params') as c:
+            c.argument('parameters', options_list=('--parameters',), validator=validators.validate_sendParamters_parameters, help='Parameters in JSON format to send to the deployment.', )
         
         with self.argument_context('ciqs deployment create') as c:
             c.argument('name', options_list=('--name', '-n'), help='Deployment name must be between 3 and 9 characters, start with a lowercase letter, and contain only lowercase letters and numbers.')

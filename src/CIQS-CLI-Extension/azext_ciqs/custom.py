@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+# TODO: See about making appropriate classes for requests.
+
 from __future__ import print_function
 
 from knack.log import get_logger
@@ -14,6 +16,7 @@ from azure.cli.core.util import in_cloud_console
 from azure.cli.core.commands.client_factory import get_subscription_id
 
 from azext_ciqs import api
+from azext_ciqs import validators
 import json
 import http.client
 
@@ -64,8 +67,44 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
                                                          solutionStorageConnectionString=solutionStorageConnectionString)
     return createDeploymentRequest.sendRequest()
 
-def deployDeployment(cmd, deploymentId, subscription=None):
-    raise CLIError('Not Implemented')
+def getDeploymentParameters(cmd, deploymentId, subscription=None):
+    """Gets the parameters required by the user at Action Required status.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscripton to use if desired.
+    """
+    currentProvisioningStep = viewCurrentProvisioningStep(cmd, deploymentId, subscription=subscription)
+    try:
+        parameters = currentProvisioningStep['parameters']
+    except KeyError:
+        return '[]'
+    parameters = [parameter for parameter in parameters if parameter['hidden'] != True]
+    return parameters
+
+def sendParameters(cmd, deploymentId, parameters=None, parameterFile=None, subscription=None):
+    """Sends parameters to the existing deployment. This should be used when
+    the deployment status is ActionRequired.
+    deploymentId: The unique id created at the time the deployment was made.
+    parameters: A string in JSON format with key value pairs for the parameters to send.
+    subscription[optional]: Provides an alternate subscription to use if desired.
+    """
+    if parameters is not None and parameterFile is not None:
+        raise CLIError("May not have parameters and a parameters file at the same time.")
+    elif parameterFile is not None:
+        try:
+            with open(parameterFile) as jsonfile:
+                parameters = jsonfile.read()
+        except IOError:
+            raise CLIError("Could not open file.")
+    elif parameters is None and parameterFile is None:
+        parameters = '{}'
+    if subscription is None:
+        subscription = get_subscription_id(cmd.cli_ctx)
+    profile = Profile(cli_ctx=cmd.cli_ctx)
+    auth_token = profile.get_raw_token(subscription=subscription)
+    validators.validate_sendParameters(cmd, parameters, subscription, deploymentId)
+    path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
+    return api.makeAPICall('PUT', path, auth_token=auth_token, refresh_token=True, requestBody=parameters, contentType='application/json')
+
 
 def viewDeployment(cmd, deploymentId, subscription=None):
     """Returns details about an existing deployment.
@@ -78,6 +117,26 @@ def viewDeployment(cmd, deploymentId, subscription=None):
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
     return api.makeAPICall('GET', path, auth_token=auth_token)
+
+def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
+    """Returns the current provisioning step.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscripton to use if desired.
+    """
+    # TODO: Consider changing this to take an optional provisioning step number to show instead of only current.
+    deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
+    currentProvisioningStepNumber = deployment['deployment']['currentProvisioningStep']
+    currentProvisioningStep = deployment['provisioningSteps'][currentProvisioningStepNumber]
+    return currentProvisioningStep
+
+def viewDeploymentStatus(cmd, deploymentId, subscription=None):
+    """Returns the status of the specified deployment.
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscription to use if desired.
+    """
+    deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
+    status = deployment['deployment']['status']
+    return {'status': status}
 
 def deleteDeployment(cmd, deploymentId, subscription=None):
     """Deletes a deployment.
@@ -95,10 +154,10 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
 # sub-group ciqs gallery
 #---------------------------------------------------------------------------------------------
 
-def listTemplates(cmd):
+def listTemplates(cmd, solutionStorageConnectionString=None):
     """Lists templates from the gallery"""
     path = api.GALLERY_ENDPOINT
-    return api.makeAPICall('GET', path)
+    return api.makeAPICall('GET', path, solutionStorageConnectionString=solutionStorageConnectionString)
 
 def getTemplate(cmd, templateId):
     """Gets details about the specified template from the gallery.
@@ -109,14 +168,15 @@ def getTemplate(cmd, templateId):
     path = api.GALLERY_ENDPOINT + templateId
     return api.makeAPICall('GET', path, auth_token=auth_token)
 
-def listLocations(cmd, templateId, subscription=None):
+def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionString=None):
     """Lists the locations which the specifed templateId may be deployed.
     templateId: The unique id of the template.
     subscription[optional]: Provides an alternate subscription to use if desired.
+    solutionStorageConnectionString[optional]: Connection string for user's storage account for private solutions.
     """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    path = api.LOCATIONS_ENDPOINT + templateId + '/' + subscription
-    return api.makeAPICall('GET', path, auth_token=auth_token)
+    path = api.LOCATIONS_ENDPOINT + subscription + '/' + templateId
+    return api.makeAPICall('GET', path, auth_token=auth_token, solutionStorageConnectionString=solutionStorageConnectionString)
