@@ -17,27 +17,27 @@ helps['ciqs'] = """
 # --------------------------------------------------------------------------------------------
 helps['ciqs deployment'] = """
     type: group
-    short-summary: Manage deployments for CIQS(Cloud Intelligence Quickstart)
+    short-summary: Manage deployments for CIQS(Cloud Intelligence Quickstart).
 """
 
 helps['ciqs deployment list'] = """
     type: command
-    short-summary: List all deployments in a subscription
+    short-summary: List all deployments in a subscription.
 """
 
 helps['ciqs deployment create'] = """
     type: command
-    short-summary: Create a deployment in a subscription
+    short-summary: Create a deployment in a subscription.
 """
 
 helps['ciqs deployment view'] = """
     type: command
-    short-summary: View a specific deployment details
+    short-summary: View a specific deployment details.
 """
 
 helps['ciqs deployment delete'] = """
     type: command
-    short-summary: Delete a specific deployment
+    short-summary: Delete a specific deployment.
 """
 
 helps['ciqs deployment send-params'] = """
@@ -52,17 +52,21 @@ helps['ciqs deployment send-params'] = """
 # --------------------------------------------------------------------------------------------
 helps['ciqs template'] = """
     type: group
-    short-summary: View public templates for CIQS(Cloud Inteligent Quick Start)
+    short-summary: View templates for CIQS(Cloud Inteligent Quick Start)
 """
 
 helps['ciqs template list'] = """
     type: command
-    short-summary: List all templates in the public gallery
+    short-summary: List all templates in the CIQS gallery.
+    long-summary: >
+        Use a connection string to list also from a private gallery.
 """
 
 helps['ciqs template view'] = """
     type: command
-    short-summary: View a specific template in the gallery
+    short-summary: View a specific template in the gallery.
+    long-summary: >
+        Use a connection string to view a template from a private gallery.
 """
 
 helps['ciqs template locations'] = """
