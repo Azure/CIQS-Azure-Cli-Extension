@@ -121,7 +121,7 @@ We should see 3 objects in response. It will tell us what valid input is, what t
 
 To send the values for the parameters, we need to provide a JSON object into a command.
 There are two options:
-1. Pass in the JSON filename as a commandline arg
+1. Pass in a JSON filename as a commandline arg
 2. Pass the JSON string as a command line arg
 
 *To pass a JSON string as a command line requires escape characters and varies depending on the command line being used*
