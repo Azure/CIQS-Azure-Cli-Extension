@@ -66,7 +66,7 @@ This will give the template id, title, and category.
 We need to know which template we want details with before we can see the details of it.
 We can select any of the templates from the list in the previous section.
 
-We will use Anomaly Detection in Real-time Data Streams (templateId: anomalydetectionpcsv2) as an example.
+We will use [Anomaly Detection in Real-time Data Streams](https://gallery.azure.ai/Solution/Anomaly-Detection-in-Real-time-Data-Streams) solution (templateId: anomalydetectionpcsv2) as an example.
 
 Run the following command to see the details of this template:
 ```Azure CLI
