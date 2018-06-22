@@ -45,6 +45,24 @@ helps['ciqs deployment send-params'] = """
     short-summary: Sends paramters to the exisiting deployment.
     long-summery: >
         This should be used when the deployment status is ActionRequired.
+        Cannot use both --parameters and --params-file at the same time.
+"""
+
+helps['ciqs deployment view-params'] = """
+    type: command
+    short-summary: View parameters for current provisioning step.
+    long-summery: >
+        This should be used when the deployment status is ActionRequired.
+"""
+
+helps['ciqs deployment view-provisioning-step'] = """
+    type: command
+    short-summary: View the current provisioning step.
+"""
+
+helps['ciqs deployment view-status'] = """
+    type: command
+    short-summary: View the current status of the deployment.
 """
 
 # --------------------------------------------------------------------------------------------
