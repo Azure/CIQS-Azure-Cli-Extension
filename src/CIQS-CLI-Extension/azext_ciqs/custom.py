@@ -73,7 +73,10 @@ def getDeploymentParameters(cmd, deploymentId, subscription=None):
     subscription[optional]: Provides an alternate subscripton to use if desired.
     """
     currentProvisioningStep = viewCurrentProvisioningStep(cmd, deploymentId, subscription=subscription)
-    parameters = currentProvisioningStep['parameters']
+    try:
+        parameters = currentProvisioningStep['parameters']
+    except KeyError:
+        return '[]'
     parameters = [parameter for parameter in parameters if parameter['hidden'] != True]
     return parameters
 
