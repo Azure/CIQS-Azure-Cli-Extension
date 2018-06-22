@@ -139,7 +139,7 @@ Create the following file params1.json:
 
 Now we will send the parameters with the following command:
 ```Azure CLI
-az ciqs deployment send-params --deployment-id 1234567890-abcd-efgh-ijkl-mnopqrstuvw --parameterFile params1.json
+az ciqs deployment send-params --deployment-id 1234567890-abcd-efgh-ijkl-mnopqrstuvw --param-file params1.json
 ```
 We should see a status of "parametersSubmitted" in the response. If it is "actionRequried", then some parameters were invalid.
 
