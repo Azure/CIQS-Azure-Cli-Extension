@@ -10,9 +10,9 @@ When finished with this tutorial, you should be able to do the following tasks:
 
 The CIQS Extension is built into 2 subgroups:
 1. deployment
-  - This is used to create, maintain, and delete deployments
+   This is used to create, maintain, and delete deployments
 2. template
-  - This is used to view templates used to deploy solutions
+   This is used to view templates used to deploy solutions
 
 **This tutorial assumes you have already installed the Azure CLI and the CIQS extension.**
 
@@ -121,8 +121,36 @@ To send the values for the parameters, we need to give a JSON string into a comm
 There are two options:
 1. Pass in a JSON filename as a commandline arg
 2. Pass the JSON string as a command line arg
+
 *To pass a JSON string as a command line requires escape characters and varies depending on the command line being used*
 
 For this tutorial, we will use a JSON file.
 
+Create the following file params1.json:
+```json
+{
+    "mLParams": "{\"tspikedetector.sensitivity\":\"3\",\"zspikedetector.sensitivity\":\"3\",\"trenddetector.sensitivity\":\"3.25\",\"bileveldetector.sensitivity\":\"3.25\"}",
+    "sqlServerUserName": "fakeuser",
+    "sqlServerPassword": "F#kePa55w0Rd"
+}
 ```
+
+Now we will send the parameters with the following command:
+```Azure CLI
+az ciqs deployment send-params --deployment-id 1234567890-abcd-efgh-ijkl-mnopqrstuvw --parameterFile params1.json
+```
+We should see a status of "parametersSubmitted" in the response. If it is "actionRequried", then some parameters were invalid.
+
+When we run view-status again, we should see the status has changed to "provisioning."
+When the status changes to "actionRequired" we again view the parameters and input them in the same manner.
+
+## Delete a deployment
+
+When it is time for a deployment to be deleted, simply run the following command:
+```Azure CLI
+ciqs deployment delete --deployment-id 1234567890-abcd-efgh-ijkl-mnopqrstuvw
+```
+
+## Conclusion
+
+Now you have successfully ran CIQS from end to end.
