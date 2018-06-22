@@ -155,4 +155,4 @@ ciqs deployment delete --deployment-id 1234567890-abcd-efgh-ijkl-mnopqrstuvw
 
 ## Conclusion
 
-Now you have successfully deployed a CIQS solution from end to end. Hope you enjoy the tutorial. If you have any question or feedback, please contact [CIQS team](ciqsoncall@microsoft.com).
+Now you have successfully deployed a CIQS solution from end to end. Hope you enjoy the tutorial. If you have any question or feedback, please contact [CIQS team](mailto:ciqsoncall@microsoft.com).
