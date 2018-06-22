@@ -55,4 +55,4 @@ az ciqs deployment list --subscription "xxxx-xxxx-xxxx-xxxx"
 
 # Tutorials
 
-(From beginning to end)[end2endTutorial.md]
+[From beginning to end](end2endTutorial.md)
