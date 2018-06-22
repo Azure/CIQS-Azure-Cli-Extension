@@ -14,7 +14,7 @@ The CIQS Extension is built into 2 subgroups:
 2. template
    This group contains commands used to list templates, view template details and list available locations for a template
 
-You can run the following command to see help manuals for the command group or command:
+You can run the following command to see help manuals for the command group or the command:
 ```Azure CLI
 az ciqs {deployment,template} {commands} -h
 ```
@@ -70,7 +70,7 @@ We will use Anomaly Detection in Real-time Data Streams (templateId: anomalydete
 
 Run the following command to see the details of this template:
 ```Azure CLI
-az ciqs template view --template-id anomalydetectionpcsv2
+az ciqs template view --template-id anomalydetectionpcsv2 [-otable]
 ```
 
 This will give us all metadata of the template.
@@ -119,9 +119,9 @@ az ciqs deployment view-params --deployment-id 1234567890-abcd-efgh-ijkl-mnopqrs
 ```
 We should see 3 objects in response. It will tell us what valid input is, what the names of parameters, and other info.
 
-To send the values for the parameters, we need to give a JSON string into a command.
+To send the values for the parameters, we need to provide a JSON object into a command.
 There are two options:
-1. Pass in a JSON filename as a commandline arg
+1. Pass in the JSON filename as a commandline arg
 2. Pass the JSON string as a command line arg
 
 *To pass a JSON string as a command line requires escape characters and varies depending on the command line being used*
