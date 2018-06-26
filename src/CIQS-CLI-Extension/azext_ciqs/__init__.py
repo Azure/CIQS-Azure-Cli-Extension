@@ -47,7 +47,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
             c.argument('solutionStorageConnectionString', options_list=('--connection-string',), help='This is the Solution Storage Connection String that is used to access your private gallery.')
 
         with self.argument_context('ciqs deployment') as c:
-            c.argument('deploymentId', options_list=('--deployment-id',), help='ID of deployment.')
+            c.argument('deploymentId', options_list=('--deployment-id', '-d'), help='ID of deployment.')
 
         with self.argument_context('ciqs deployment send-params') as c:
             c.argument('parameters', options_list=('--parameters',), validator=validators.validate_sendParamters_parameters, help='Parameters in JSON format to send to the deployment.', )
@@ -56,7 +56,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
         with self.argument_context('ciqs deployment create') as c:
             c.argument('name', options_list=('--name', '-n'), help='Deployment name must be between 3 and 9 characters, start with a lowercase letter, and contain only lowercase letters and numbers.')
             c.argument('location', options_list=('--location', '-l'), help='Location to deploy. See "az ciqs template locations -h"')
-            c.argument('description', options_list=('--description', '-d'), help='Describe the deployment.')
+            c.argument('description', options_list=('--description',), help='Describe the deployment.')
 
 
 COMMAND_LOADER_CLS = CiqsCommandsLoader
