@@ -10,9 +10,9 @@ from azext_ciqs import util
 
 def transform_templateListItem(result):
     """Transforms an item from a template list into a row in a table"""
-    result = OrderedDict([('Template Id', result['id']),
-                        ('Title', result['title']),
-                        ('Category', result['category'])])
+    result = OrderedDict([('Template Id', result['id'] if 'id' in result else ''),
+                        ('Title', result['title'] if 'title' in result else ''),
+                        ('Category', result['category'] if 'category' in result else '')])
     return result
 
 def transform_templateList(template_list):
@@ -21,21 +21,21 @@ def transform_templateList(template_list):
 
 def transform_templateView(result):
     """Transforms a single template into a one row table"""
-    result = OrderedDict([('Title', result['title']),
-                        ('Template Id', result['id']),
-                        ('Category', result['category']),
-                        ('Estimated Time', result['estimatedTime']),
-                        ('Description', result['description'])])
+    result = OrderedDict([('Title', result['title'] if 'title' in result else ''),
+                        ('Template Id', result['id'] if 'id' in result else ''),
+                        ('Category', result['category'] if 'category' in result else ''),
+                        ('Estimated Time', result['estimatedTime'] if 'estimatedTime' in result else ''),
+                        ('Description', result['description'] if 'description' in result else '')])
     return result
 
 def transform_deploymentListItem(result):
     """Transforms an item from a deployment list into a row in a table"""
-    result = OrderedDict([('Deployment Id', result['uniqueId']),
-                        ('Deployment Name', result['name']),
-                        ('Location', result['location']),
+    result = OrderedDict([('Deployment Id', result['uniqueId'] if 'uniqueId' in result else ''),
+                        ('Deployment Name', result['name'] if 'name' in result else ''),
+                        ('Location', result['location'] if 'location' in result else ''),
                         ('Status', util.provisioningStatusTransform(result['status'])),
-                        ('Created By User', result['createdByUserFriendlyName']),
-                        ('Created By Email', result['createdByUserEmail'])])
+                        ('Created By User', result['createdByUserFriendlyName'] if 'createdByUserFriendlyName' in result else ''),
+                        ('Created By Email', result['createdByUserEmail'] if 'createdByUserEmail' in result else '')])
     return result
 
 def transform_deploymentList(deployment_list):
@@ -50,8 +50,8 @@ def transform_deploymentView(result):
 def transform_deploymentParam(result):
     """Transforms a paramter into a row for a table"""
     result = OrderedDict([('Description', result['description']),
-                        ('Name', result['name']),
-                        ('Type', result['type']),
+                        ('Name', result['name'] if 'name' in result else ''),
+                        ('Type', result['type'] if 'type' in result else ''),
                         ('Lists Allowed Values', 'Yes' if 'allowedValues' in result else 'No'),
                         ('Default', result['defaultValue'] if 'defaultValue' in result else '')])
     return result
