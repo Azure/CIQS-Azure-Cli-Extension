@@ -5,7 +5,6 @@
 
 from collections import OrderedDict
 from collections import defaultdict
-from ast import literal_eval
 
 from azext_ciqs import util
 
