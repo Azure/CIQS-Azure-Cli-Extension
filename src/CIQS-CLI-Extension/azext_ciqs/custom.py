@@ -127,6 +127,7 @@ def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
     deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
     currentProvisioningStepNumber = deployment['deployment']['currentProvisioningStep']
     currentProvisioningStep = deployment['provisioningSteps'][currentProvisioningStepNumber]
+    currentProvisioningStep['status'] = deployment['deployment']['status']
     return currentProvisioningStep
 
 def viewDeploymentStatus(cmd, deploymentId, subscription=None):
