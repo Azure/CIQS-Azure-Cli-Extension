@@ -61,3 +61,14 @@ def transform_deploymentViewParamsList(param_list):
 
 def transform_deploymentViewStatus(result):
     return OrderedDict([('Status', util.provisioningStatusTransform(result['status']))])
+
+def transform_provisioningStep(result):
+    if 'instructions' in result:
+        print(result['instructions']['data'])
+        print('')
+
+    result = OrderedDict([('Title', result['title'] if 'title' in result else ''),
+                        ('Status', util.provisioningStatusTransform(result['status'])),
+                        ('Type', result['type'] if 'type' in result else ''),
+                        ('UserInputRequired', result['userInputRequired'] if 'userInputRequired' in result else '')])
+    return result
