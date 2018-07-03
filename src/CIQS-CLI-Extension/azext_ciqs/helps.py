@@ -65,6 +65,11 @@ helps['ciqs deployment view-status'] = """
     short-summary: View the current status of the deployment.
 """
 
+helps['ciqs deployment wait-terminal-status'] = """
+    type: command
+    short-summary: Waits for a terminal status to be reached and then return the status.
+"""
+
 # --------------------------------------------------------------------------------------------
 # gallery
 # --------------------------------------------------------------------------------------------

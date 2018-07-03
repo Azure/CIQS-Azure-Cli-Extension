@@ -42,11 +42,11 @@ def makeAPICall(method, path, auth_token=None, refresh_token=False, requestBody=
     # Use the environment variable to run api calls against the test api instead of production api.
     if os.getenv(TEST_ENVIRONMENT_VAR, False) == "Remote":
         host = TEST_HOST_REMOTE
-        logger.warning('Using test api...')
+        #logger.warning('Using test api...')
     elif os.getenv(TEST_ENVIRONMENT_VAR, False) == "Local":
         host = TEST_HOST_LOCAL
         port = TEST_PORT_LOCAL
-        logger.warning('Running local api...')
+        #logger.warning('Running local api...')
     # Build the appropriate headers:
     headers = {'Accept': 'application/json'}
     # Check to see if specific headers should be added.

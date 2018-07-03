@@ -17,6 +17,7 @@ from azure.cli.core.commands.client_factory import get_subscription_id
 
 from azext_ciqs import api
 from azext_ciqs import validators
+from azext_ciqs import util
 import json
 import http.client
 
@@ -150,6 +151,25 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
     auth_token = profile.get_raw_token(subscription=subscription)
     path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
     return api.makeAPICall('DELETE', path, auth_token=auth_token)
+
+def waitForTerminalStatus(cmd, deploymentId, subscription=None, timeout=None):
+    """Wait for a deployment to reach a terminal status
+    deploymentId: The unique id created at the time the deployment was made.
+    subscription[optional]: Provides an alternate subscripton to use if desired.
+    timeout[optional]: Amount of time before call times out (in second).
+    """
+    import time
+    start = time.time()
+    status = viewDeploymentStatus(cmd, deploymentId, subscription=subscription)
+    while status['status'] not in util.TERMINAL_STATUSES:
+        if timeout is not None and time.time() - start > timeout:
+            raise CLIError('Call timedout')
+        try:
+            status = viewDeploymentStatus(cmd, deploymentId, subscription=subscription)
+        except CLIError:
+            status['status'] = 'deleted'
+        time.sleep(5)
+    return status
 
 #---------------------------------------------------------------------------------------------
 # sub-group ciqs gallery

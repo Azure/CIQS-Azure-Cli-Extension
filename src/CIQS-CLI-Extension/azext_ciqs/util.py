@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from collections import defaultdict
+from collections import Set
 
 STATUS_DICT = defaultdict(lambda: 'Unknown',
                          {'created': 'Created',
@@ -22,3 +23,5 @@ def provisioningStatusTransform(status):
     """Transforms provisioning status into a human readable form"""
     status = status.lower()
     return STATUS_DICT[status]
+
+TERMINAL_STATUSES = set(['timeout', 'actionRequired', 'failed', 'ready', 'deleted'])
