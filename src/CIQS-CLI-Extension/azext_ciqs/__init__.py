@@ -31,6 +31,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
             g.custom_command('view-provisioning-step', 'viewCurrentProvisioningStep', table_transformer=format.transform_provisioningStep)
             g.custom_command('view-status', 'viewDeploymentStatus', table_transformer=format.transform_deploymentViewStatus)
             g.custom_command('view-params', 'getDeploymentParameters', table_transformer=format.transform_deploymentViewParamsList)
+            g.custom_command('wait-terminal-status', 'waitForTerminalStatus')
 
         with self.command_group('ciqs template') as g:
             g.custom_command('list', 'listTemplates', table_transformer=format.transform_templateList)
@@ -58,5 +59,7 @@ class CiqsCommandsLoader(AzCommandsLoader):
             c.argument('location', options_list=('--location', '-l'), help='Location to deploy. See "az ciqs template locations -h"')
             c.argument('description', options_list=('--description',), help='Describe the deployment.')
 
+        with self.argument_context('ciqs deployment wait-terminal-status') as c:
+            c.argument('timeout', options_list=('--timeout',), help='Max time to wait for terminal status')
 
 COMMAND_LOADER_CLS = CiqsCommandsLoader
