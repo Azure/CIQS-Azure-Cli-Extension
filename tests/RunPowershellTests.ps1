@@ -7,7 +7,7 @@ $env:CIQS_CLI_TEST="Remote"
 
 $originalColor = $Host.UI.RawUI.ForegroundColor
 
-$numberOfTests = (Get-ChildItem ".\testScripts").count
+$numberOfTests = (Get-ChildItem ".\testPowershellScripts").count
 $numberOfTestsRun = 0
 
 Get-ChildItem ".\testScripts" | ForEach-Object {
