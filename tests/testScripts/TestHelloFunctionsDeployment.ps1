@@ -29,4 +29,12 @@ if(-not $deploymentStatus.status -eq "ready"){
     exit 6
 }
 
+$provisioningStep = az ciqs deployment view-provisioning-step --deployment-id $deployment.uniqueId | ConvertFrom-Json
+if($LASTEXITCODE -ne 0){
+    exit 7
+}
+if(-not $provisioningStep.instructions.data.contains("Hello USA!")){
+    exit 8
+}
+
 az ciqs deployment delete --deployment-id $deployment.uniqueId
