@@ -159,6 +159,7 @@ def waitForTerminalStatus(cmd, deploymentId, subscription=None, timeout=None):
     timeout[optional]: Amount of time before call times out (in second).
     """
     import time
+    timeout=float(timeout)
     start = time.time()
     status = viewDeploymentStatus(cmd, deploymentId, subscription=subscription)
     while status['status'] not in util.TERMINAL_STATUSES:
