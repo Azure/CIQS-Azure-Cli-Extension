@@ -44,7 +44,7 @@ def listDeployments(cmd, subscription=None):
     path = api.DEPLOYMENT_ENDPOINT + subscription
     return api.makeAPICall('GET', path, auth_token=auth_token)
 
-def createDeployment(cmd, name, location, templateId, description=None, parameters=None, solutionStorageConnectionString=None, subscription=None):
+def createDeployment(cmd, name, location, templateId, description=None, parameters=None, parameterFile=None, solutionStorageConnectionString=None, subscription=None):
     """Creates a deployment with the specified parameters.
     name: The name of the deployment. (must be alphanumeric lowercase between 3 to 9 characters beginning with a letter)
     location: The location to deploy the solution to.
@@ -58,6 +58,15 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
+    if parameters is not None and parameterFile is not None:
+        raise CLIError("May not have parameters and a parameters file at the same time.")
+    elif parameterFile is not None:
+        try:
+            with open(parameterFile) as jsonfile:
+                parameters = jsonfile.read()
+        except IOError:
+            raise CLIError("Could not open file.")
+    validators.validate_json_arg(parameters)
     createDeploymentRequest = api.CreateDeploymentRequest(name,
                                                          location,
                                                          templateId,
@@ -181,14 +190,14 @@ def listTemplates(cmd, solutionStorageConnectionString=None):
     path = api.GALLERY_ENDPOINT
     return api.makeAPICall('GET', path, solutionStorageConnectionString=solutionStorageConnectionString)
 
-def getTemplate(cmd, templateId):
+def getTemplate(cmd, templateId, solutionStorageConnectionString=None):
     """Gets details about the specified template from the gallery.
     templateId: The unique id of the template.
     """
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token()
     path = api.GALLERY_ENDPOINT + templateId
-    return api.makeAPICall('GET', path, auth_token=auth_token)
+    return api.makeAPICall('GET', path, auth_token=auth_token, solutionStorageConnectionString=solutionStorageConnectionString)
 
 def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionString=None):
     """Lists the locations which the specifed templateId may be deployed.
