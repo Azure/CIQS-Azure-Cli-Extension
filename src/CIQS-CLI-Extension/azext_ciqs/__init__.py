@@ -49,11 +49,9 @@ class CiqsCommandsLoader(AzCommandsLoader):
 
         with self.argument_context('ciqs deployment') as c:
             c.argument('deploymentId', options_list=('--deployment-id', '-d'), help='ID of deployment.')
-
-        with self.argument_context('ciqs deployment send-params') as c:
             c.argument('parameters', options_list=('--parameters',), validator=validators.validate_sendParamters_parameters, help='Parameters in JSON format to send to the deployment.', )
             c.argument('parameterFile', options_list=('--param-file',), help='JSON file containing parameters to send.')
-        
+
         with self.argument_context('ciqs deployment create') as c:
             c.argument('name', options_list=('--name', '-n'), help='Deployment name must be between 3 and 9 characters, start with a lowercase letter, and contain only lowercase letters and numbers.')
             c.argument('location', options_list=('--location', '-l'), help='Location to deploy. See "az ciqs template locations -h"')

@@ -108,7 +108,10 @@ class CreateDeploymentRequest:
         self.subscription = subscription
         self.auth_token = auth_token
         self.description = description
-        self.parameters = parameters
+        if parameters is not None:
+            self.parameters = json.loads(parameters)
+        else:
+            self.parameters = None
         self.solutionStorageConnectionString = solutionStorageConnectionString
 
     def _buildRequestBody(self):
@@ -129,6 +132,7 @@ class CreateDeploymentRequest:
         data['environment'] = 'prod'
         data['referrer'] = 'az ciqs'
         requestBody = json.dumps(data)
+        logger.debug("Request Body:\n" + requestBody)
         return requestBody
 
     def sendRequest(self):
