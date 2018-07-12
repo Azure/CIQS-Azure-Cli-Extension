@@ -66,7 +66,8 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
                 parameters = jsonfile.read()
         except IOError:
             raise CLIError("Could not open file.")
-    validators.validate_json_arg(parameters)
+    elif parameters is not None:
+        validators.validate_json_arg(parameters)
     createDeploymentRequest = api.CreateDeploymentRequest(name,
                                                          location,
                                                          templateId,
