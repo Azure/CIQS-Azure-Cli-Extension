@@ -24,6 +24,16 @@ GALLERY_ENDPOINT = API_BASE_ENDPOINT + 'gallery/'
 LOCATIONS_ENDPOINT = API_BASE_ENDPOINT + 'locations/'
 TEST_ENVIRONMENT_VAR = 'CIQS_CLI_TEST'
 
+def getEndpoint():
+    if os.getenv(TEST_ENVIRONMENT_VAR, False) == "Remote":
+        base_url = 'https://ciqs-api-test-westus.azurewebsites.net'
+        return base_url
+    elif os.getenv(TEST_ENVIRONMENT_VAR, False) == "Local":
+        base_url = 'https://localhost:44332'
+        return base_url
+    else:
+        return None
+
 def makeAPICall(method, path, auth_token=None, refresh_token=False, requestBody=None, contentType=None, solutionStorageConnectionString=None):
     """Makes a call to the api with through the given method to the path endpoint provided
     method: The http method to use when making the call.
@@ -55,7 +65,7 @@ def makeAPICall(method, path, auth_token=None, refresh_token=False, requestBody=
     if not (contentType is None):
         headers['Content-Type'] = contentType
     if refresh_token == True:
-        headers['MS-AsmRefreshToken'] = auth_token[0][2]['refreshToken']
+        headers['MS-AsmRefreshToken'] = auth_token[0][2]
     if not (solutionStorageConnectionString is None):
         headers['SolutionStorageConnectionString'] = solutionStorageConnectionString
     if requestBody is not None and contentType is None:
@@ -78,69 +88,4 @@ def makeAPICall(method, path, auth_token=None, refresh_token=False, requestBody=
     except json.JSONDecodeError:
         raise CLIError("Could not decode response from server.")
     return responseBodyJSON
-
-
-class CreateDeploymentRequest:
-    """Object to build and send a deployment create request."""
-
-    def __init__(self,
-                name,
-                location,
-                templateId,
-                subscription,
-                auth_token,
-                description=None,
-                parameters=None,
-                solutionStorageConnectionString=None):
-        """Creates an instance of the class.
-        name: The name of the deployment. (must be alphanumeric lowercase between 3 to 9 characters beginning with a letter)
-        location: The location to deploy the solution to.
-        templateId: The unique id of the template which the deployment will be bulit from.
-        subscription: The subscription in which to create a deployment to.
-        auth_token: The authentication token from the Azure CLI.
-        description[optional]: The optional description of the deployment.
-        parameters[optional]:
-        solutionStorageConnectionString[optional]:
-        """
-        self.name = name
-        self.location = location
-        self.templateId = templateId
-        self.subscription = subscription
-        self.auth_token = auth_token
-        self.description = description
-        if parameters is not None:
-            self.parameters = json.loads(parameters)
-        else:
-            self.parameters = None
-        self.solutionStorageConnectionString = solutionStorageConnectionString
-
-    def _buildRequestBody(self):
-        """Used to build the request body to send to the API."""
-        data = {}
-        data['name'] = self.name
-        data['location'] = self.location
-        data['templateId'] = self.templateId
-        data['subscription'] = self.subscription
-        if self.description is not None:
-            data['description'] = self.description
-        else:
-            data['description'] = ''
-        if self.parameters is not None:
-            data['parameters'] = self.parameters
-        if self.solutionStorageConnectionString is not None:
-            data['solutionStorageConnectionString'] = self.solutionStorageConnectionString
-        data['environment'] = 'prod'
-        data['referrer'] = 'az ciqs'
-        requestBody = json.dumps(data)
-        logger.debug("Request Body:\n" + requestBody)
-        return requestBody
-
-    def sendRequest(self):
-        """Sends the request. Returns the response."""
-        path = DEPLOYMENT_ENDPOINT + '/' + self.subscription + '/' + self.templateId
-        requestBody = self._buildRequestBody()
-        return makeAPICall('POST',
-                          path,
-                          auth_token=self.auth_token,
-                          requestBody=requestBody,
-                          contentType='application/json')
+    

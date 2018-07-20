@@ -21,6 +21,8 @@ STATUS_DICT = defaultdict(lambda: 'Unknown',
 
 def provisioningStatusTransform(status):
     """Transforms provisioning status into a human readable form"""
+    if status is None:
+        return ''
     status = status.lower()
     return STATUS_DICT[status]
 
