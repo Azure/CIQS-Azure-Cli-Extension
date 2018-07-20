@@ -10,6 +10,7 @@ from __future__ import print_function
 from knack.log import get_logger
 from knack.prompting import prompt_pass, NoTTYException
 from knack.util import CLIError
+from msrest import authentication
 
 from azure.cli.core._profile import Profile
 from azure.cli.core.util import in_cloud_console
@@ -18,6 +19,8 @@ from azure.cli.core.commands.client_factory import get_subscription_id
 from azext_ciqs import api
 from azext_ciqs import validators
 from azext_ciqs import util
+from cloudintelligencequickstart import models
+from cloudintelligencequickstart import ciqs_api
 import json
 import http.client
 
@@ -41,8 +44,10 @@ def listDeployments(cmd, subscription=None):
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    path = api.DEPLOYMENT_ENDPOINT + subscription
-    return api.makeAPICall('GET', path, auth_token=auth_token)
+    creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
+    ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
+    deployments = ciqsapi.get_api_deployments_by_subscription_id(subscription)
+    return deployments
 
 def createDeployment(cmd, name, location, templateId, description=None, parameters=None, parameterFile=None, solutionStorageConnectionString=None, subscription=None):
     """Creates a deployment with the specified parameters.
@@ -68,15 +73,23 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
             raise CLIError("Could not open file.")
     elif parameters is not None:
         validators.validate_json_arg(parameters)
-    createDeploymentRequest = api.CreateDeploymentRequest(name,
-                                                         location,
-                                                         templateId,
-                                                         subscription,
-                                                         auth_token,
-                                                         description=description,
-                                                         parameters=parameters,
-                                                         solutionStorageConnectionString=solutionStorageConnectionString)
-    return createDeploymentRequest.sendRequest()
+    creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
+    ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
+    request = models.MicrosoftCiqsModelsDeploymentCreateDeploymentRequest(name,
+                                                                          location,
+                                                                          template_id=templateId,
+                                                                          subscription=subscription,
+                                                                          description=description,
+                                                                          referrer='az ciqs',
+                                                                          solution_storage_connection_string=solutionStorageConnectionString,
+                                                                          parameters=parameters)
+    print(request)
+    response = ciqsapi.post_api_deployments_by_subscription_id_by_template_id(subscription_id=subscription,
+                                                                   template_id=templateId,
+                                                                   body=request,
+                                                                   ms_asm_refresh_token=auth_token[0][2]['refreshToken'])
+
+    return response
 
 def getDeploymentParameters(cmd, deploymentId, subscription=None):
     """Gets the parameters required by the user at Action Required status.
@@ -85,10 +98,10 @@ def getDeploymentParameters(cmd, deploymentId, subscription=None):
     """
     currentProvisioningStep = viewCurrentProvisioningStep(cmd, deploymentId, subscription=subscription)
     try:
-        parameters = currentProvisioningStep['parameters']
+        parameters = currentProvisioningStep.parameters
     except KeyError:
         return '[]'
-    parameters = [parameter for parameter in parameters if parameter['hidden'] != True]
+    parameters = [parameter for parameter in parameters if parameter.hidden != True]
     return parameters
 
 def sendParameters(cmd, deploymentId, parameters=None, parameterFile=None, subscription=None):
@@ -113,8 +126,11 @@ def sendParameters(cmd, deploymentId, parameters=None, parameterFile=None, subsc
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     validators.validate_sendParameters(cmd, parameters, subscription, deploymentId)
-    path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
-    return api.makeAPICall('PUT', path, auth_token=auth_token, refresh_token=True, requestBody=parameters, contentType='application/json')
+    parameters = json.loads(parameters)
+    creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
+    ciqsapi = ciqs_api.CiqsApi(creds, api.getEndpoint())
+    response = ciqsapi.put_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId, parameters)
+    return response
 
 
 def viewDeployment(cmd, deploymentId, subscription=None):
@@ -126,8 +142,10 @@ def viewDeployment(cmd, deploymentId, subscription=None):
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
-    return api.makeAPICall('GET', path, auth_token=auth_token)
+    creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
+    ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
+    deployment = ciqsapi.get_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId)
+    return deployment
 
 def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
     """Returns the current provisioning step.
@@ -136,9 +154,8 @@ def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
     """
     # TODO: Consider changing this to take an optional provisioning step number to show instead of only current.
     deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
-    currentProvisioningStepNumber = deployment['deployment']['currentProvisioningStep']
-    currentProvisioningStep = deployment['provisioningSteps'][currentProvisioningStepNumber]
-    currentProvisioningStep['status'] = deployment['deployment']['status']
+    currentProvisioningStepNumber = deployment.deployment.current_provisioning_step
+    currentProvisioningStep = deployment.provisioning_steps[currentProvisioningStepNumber]
     return currentProvisioningStep
 
 def viewDeploymentStatus(cmd, deploymentId, subscription=None):
@@ -147,7 +164,7 @@ def viewDeploymentStatus(cmd, deploymentId, subscription=None):
     subscription[optional]: Provides an alternate subscription to use if desired.
     """
     deployment = viewDeployment(cmd=cmd, deploymentId=deploymentId, subscription=subscription)
-    status = deployment['deployment']['status']
+    status = deployment.deployment.status
     return {'status': status}
 
 def deleteDeployment(cmd, deploymentId, subscription=None):
@@ -159,8 +176,10 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    path = api.DEPLOYMENT_ENDPOINT + subscription + '/' + deploymentId
-    return api.makeAPICall('DELETE', path, auth_token=auth_token)
+    creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
+    ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
+    deleteResponse = ciqsapi.delete_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId)
+    return deleteResponse
 
 def waitForTerminalStatus(cmd, deploymentId, subscription=None, timeout=None):
     """Wait for a deployment to reach a terminal status
@@ -189,8 +208,9 @@ def waitForTerminalStatus(cmd, deploymentId, subscription=None, timeout=None):
 
 def listTemplates(cmd, solutionStorageConnectionString=None):
     """Lists templates from the gallery"""
-    path = api.GALLERY_ENDPOINT
-    return api.makeAPICall('GET', path, solutionStorageConnectionString=solutionStorageConnectionString)
+    ciqsapi = ciqs_api.CiqsApi(None, base_url=api.getEndpoint())
+    templates = ciqsapi.get_api_gallery(solution_storage_connection_string=solutionStorageConnectionString)
+    return templates
 
 def getTemplate(cmd, templateId, solutionStorageConnectionString=None):
     """Gets details about the specified template from the gallery.
@@ -198,8 +218,10 @@ def getTemplate(cmd, templateId, solutionStorageConnectionString=None):
     """
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token()
-    path = api.GALLERY_ENDPOINT + templateId
-    return api.makeAPICall('GET', path, auth_token=auth_token, solutionStorageConnectionString=solutionStorageConnectionString)
+    creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
+    ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
+    template = ciqsapi.get_api_gallery_by_template_id(templateId, solution_storage_connection_string=solutionStorageConnectionString)
+    return template
 
 def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionString=None):
     """Lists the locations which the specifed templateId may be deployed.
@@ -211,5 +233,7 @@ def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionS
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    path = api.LOCATIONS_ENDPOINT + subscription + '/' + templateId
-    return api.makeAPICall('GET', path, auth_token=auth_token, solutionStorageConnectionString=solutionStorageConnectionString)
+    creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
+    ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
+    locations = ciqsapi.get_api_locations_by_subscription_id_by_template_id(templateId, subscription, solution_storage_connection_string=solutionStorageConnectionString)
+    return locations

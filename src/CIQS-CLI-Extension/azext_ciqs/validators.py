@@ -26,7 +26,7 @@ def validate_sendParameters(cmd, parameters, subscription, deploymentId):
     parametersJson = json.loads(parameters)
     for key in parametersJson:
         for i in range(0, len(requiredParams)):
-            if requiredParams[i]['name'] == key and 'allowedValues' in requiredParams[i]:
-                if not (parametersJson[key] in requiredParams[i]['allowedValues']):
-                    message = "Parameter " + str(parametersJson[key]) + " is not an allowed value for " + key + ".\n" + "Allowed Values are: " + ', '.join(requiredParams[i]['allowedValues'])
+            if requiredParams[i].name == key and requiredParams[i].allowed_values is not None:
+                if not (parametersJson[key] in requiredParams[i].allowed_values):
+                    message = "Parameter " + str(parametersJson[key]) + " is not an allowed value for " + key + ".\n" + "Allowed Values are: " + ', '.join(requiredParams[i].allowed_values)
                     raise CLIError(message)
