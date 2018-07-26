@@ -68,7 +68,7 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
     elif parameterFile is not None:
         try:
             with open(parameterFile) as jsonfile:
-                parameters = jsonfile.read()
+                parameters = json.load(jsonfile)
         except IOError:
             raise CLIError("Could not open file.")
     elif parameters is not None:
@@ -83,7 +83,6 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
                                                                           referrer='az ciqs',
                                                                           solution_storage_connection_string=solutionStorageConnectionString,
                                                                           parameters=parameters)
-    print(request)
     response = ciqsapi.post_api_deployments_by_subscription_id_by_template_id(subscription_id=subscription,
                                                                    template_id=templateId,
                                                                    body=request,
