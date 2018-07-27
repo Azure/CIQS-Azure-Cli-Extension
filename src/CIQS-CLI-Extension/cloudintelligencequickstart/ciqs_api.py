@@ -11,6 +11,7 @@ from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrest.exceptions import HttpOperationError
 from . import models
+import json
 
 
 class CiqsApiConfiguration(Configuration):
@@ -434,8 +435,7 @@ class CiqsApi(object):
             header_parameters['MS-AsmRefreshToken'] = self._serialize.header("ms_asm_refresh_token", ms_asm_refresh_token, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, '{str}')
-
+        body_content = json.dumps(body)
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(

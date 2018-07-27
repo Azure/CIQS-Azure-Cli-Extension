@@ -115,17 +115,18 @@ def sendParameters(cmd, deploymentId, parameters=None, parameterFile=None, subsc
     elif parameterFile is not None:
         try:
             with open(parameterFile) as jsonfile:
-                parameters = jsonfile.read()
+                parameters = json.load(jsonfile)
         except IOError:
             raise CLIError("Could not open file.")
-    elif parameters is None and parameterFile is None:
+    elif parameters is not None:
+        validators.validate_sendParameters(cmd, parameters, subscription, deploymentId)
+        parameters = json.loads(parameters)
+    else:
         parameters = '{}'
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
-    validators.validate_sendParameters(cmd, parameters, subscription, deploymentId)
-    parameters = json.loads(parameters)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds, api.getEndpoint())
     response = ciqsapi.put_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId, parameters)
