@@ -73,6 +73,7 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
             raise CLIError("Could not open file.")
     elif parameters is not None:
         validators.validate_json_arg(parameters)
+        parameters = json.loads(parameters)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
     request = models.MicrosoftCiqsModelsDeploymentCreateDeploymentRequest(name,
