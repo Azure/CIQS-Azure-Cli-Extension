@@ -68,7 +68,6 @@ def transform_provisioningStep(result):
         print('')
 
     result = OrderedDict([('Title', result['title'] if 'title' in result else ''),
-                        ('Status', util.provisioningStatusTransform(result['status'])),
                         ('Type', result['type'] if 'type' in result else ''),
                         ('UserInputRequired', result['userInputRequired'] if 'userInputRequired' in result else '')])
     return result
