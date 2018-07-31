@@ -23,6 +23,7 @@ from cloudintelligencequickstart import models
 from cloudintelligencequickstart import ciqs_api
 import json
 import http.client
+import msrest.exceptions
 
 logger = get_logger(__name__)
 
@@ -46,7 +47,11 @@ def listDeployments(cmd, subscription=None):
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
-    deployments = ciqsapi.get_api_deployments_by_subscription_id(subscription)
+    try:
+        deployments = ciqsapi.get_api_deployments_by_subscription_id(subscription)
+    except msrest.exceptions.HttpOperationError as e:
+        message = e.response.json()
+        raise CLIError(message)
     return deployments
 
 def createDeployment(cmd, name, location, templateId, description=None, parameters=None, parameterFile=None, solutionStorageConnectionString=None, subscription=None):
@@ -84,11 +89,14 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
                                                                           referrer='az ciqs',
                                                                           solution_storage_connection_string=solutionStorageConnectionString,
                                                                           parameters=parameters)
-    response = ciqsapi.post_api_deployments_by_subscription_id_by_template_id(subscription_id=subscription,
-                                                                   template_id=templateId,
-                                                                   body=request,
-                                                                   ms_asm_refresh_token=auth_token[0][2]['refreshToken'])
-
+    try:
+        response = ciqsapi.post_api_deployments_by_subscription_id_by_template_id(subscription_id=subscription,
+                                                                                  template_id=templateId,
+                                                                                  body=request,
+                                                                                  ms_asm_refresh_token=auth_token[0][2]['refreshToken'])
+    except msrest.exceptions.HttpOperationError as e:
+        message = e.response.json()
+        raise CLIError(message)
     return response
 
 def getDeploymentParameters(cmd, deploymentId, subscription=None):
@@ -130,7 +138,11 @@ def sendParameters(cmd, deploymentId, parameters=None, parameterFile=None, subsc
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds, api.getEndpoint())
-    response = ciqsapi.put_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId, parameters)
+    try:
+        response = ciqsapi.put_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId, parameters)
+    except msrest.exceptions.HttpOperationError as e:
+        message = e.response.json()
+        raise CLIError(message)
     return response
 
 
@@ -145,7 +157,11 @@ def viewDeployment(cmd, deploymentId, subscription=None):
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
-    deployment = ciqsapi.get_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId)
+    try:
+        deployment = ciqsapi.get_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId)
+    except msrest.exceptions.HttpOperationError as e:
+        message = e.response.json()
+        raise CLIError(message)
     return deployment
 
 def viewCurrentProvisioningStep(cmd, deploymentId, subscription=None):
@@ -179,7 +195,11 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
-    deleteResponse = ciqsapi.delete_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId)
+    try:
+        deleteResponse = ciqsapi.delete_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId)
+    except msrest.exceptions.HttpOperationError as e:
+        message = e.response.json()
+        raise CLIError(message)
     return deleteResponse
 
 def waitForTerminalStatus(cmd, deploymentId, subscription=None, timeout=None):
@@ -210,7 +230,11 @@ def waitForTerminalStatus(cmd, deploymentId, subscription=None, timeout=None):
 def listTemplates(cmd, solutionStorageConnectionString=None):
     """Lists templates from the gallery"""
     ciqsapi = ciqs_api.CiqsApi(None, base_url=api.getEndpoint())
-    templates = ciqsapi.get_api_gallery(solution_storage_connection_string=solutionStorageConnectionString)
+    try:
+        templates = ciqsapi.get_api_gallery(solution_storage_connection_string=solutionStorageConnectionString)
+    except msrest.exceptions.HttpOperationError as e:
+        message = e.response.json()
+        raise CLIError(message)
     return templates
 
 def getTemplate(cmd, templateId, solutionStorageConnectionString=None):
@@ -221,7 +245,11 @@ def getTemplate(cmd, templateId, solutionStorageConnectionString=None):
     auth_token = profile.get_raw_token()
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
-    template = ciqsapi.get_api_gallery_by_template_id(templateId, solution_storage_connection_string=solutionStorageConnectionString)
+    try:
+        template = ciqsapi.get_api_gallery_by_template_id(templateId, solution_storage_connection_string=solutionStorageConnectionString)
+    except msrest.exceptions.HttpOperationError as e:
+        message = e.response.json()
+        raise CLIError(message)
     return template
 
 def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionString=None):
@@ -236,5 +264,9 @@ def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionS
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
-    locations = ciqsapi.get_api_locations_by_subscription_id_by_template_id(templateId, subscription, solution_storage_connection_string=solutionStorageConnectionString)
+    try:
+        locations = ciqsapi.get_api_locations_by_subscription_id_by_template_id(templateId, subscription, solution_storage_connection_string=solutionStorageConnectionString)
+    except msrest.exceptions.HttpOperationError as e:
+        message = e.response.json()
+        raise CLIError(message)
     return locations
