@@ -16,10 +16,12 @@ logger = get_logger(__name__)
 TEST_ENVIRONMENT_VAR = 'CIQS_CLI_TEST'
 
 def getEndpoint():
+    logger.info("Using test api...")
     if os.getenv(TEST_ENVIRONMENT_VAR, False) == "Remote":
         base_url = 'https://ciqs-api-test-westus.azurewebsites.net'
         return base_url
     elif os.getenv(TEST_ENVIRONMENT_VAR, False) == "Local":
+        logger.info("Using test api...")
         base_url = 'https://localhost:44332'
         return base_url
     else:

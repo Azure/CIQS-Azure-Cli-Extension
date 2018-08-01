@@ -43,11 +43,13 @@ def listDeployments(cmd, subscription=None):
     """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
+        logger.info("Using default subscription: " + subscription)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
     try:
+        logger.info("Sending request.")
         deployments = ciqsapi.get_api_deployments_by_subscription_id(subscription)
     except msrest.exceptions.HttpOperationError as e:
         message = e.response.json()
@@ -66,19 +68,24 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
     """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
+        logger.info("Using default subscription: " + subscription)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     if parameters is not None and parameterFile is not None:
         raise CLIError("May not have parameters and a parameters file at the same time.")
     elif parameterFile is not None:
+        logger.info("Using parameter file: " + parameterFile)
         try:
             with open(parameterFile) as jsonfile:
                 parameters = json.load(jsonfile)
+            logger.info("Parameters loaded.")
         except IOError:
             raise CLIError("Could not open file.")
     elif parameters is not None:
+        logger.info("Using parameters from commandline argument.")
         validators.validate_json_arg(parameters)
         parameters = json.loads(parameters)
+        logger.info("Parameters loaded")
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
     request = models.MicrosoftCiqsModelsDeploymentCreateDeploymentRequest(name,
@@ -90,6 +97,7 @@ def createDeployment(cmd, name, location, templateId, description=None, paramete
                                                                           solution_storage_connection_string=solutionStorageConnectionString,
                                                                           parameters=parameters)
     try:
+        logger.info("Sending request.")
         response = ciqsapi.post_api_deployments_by_subscription_id_by_template_id(subscription_id=subscription,
                                                                                   template_id=templateId,
                                                                                   body=request,
@@ -105,10 +113,7 @@ def getDeploymentParameters(cmd, deploymentId, subscription=None):
     subscription[optional]: Provides an alternate subscripton to use if desired.
     """
     currentProvisioningStep = viewCurrentProvisioningStep(cmd, deploymentId, subscription=subscription)
-    try:
-        parameters = currentProvisioningStep.parameters
-    except KeyError:
-        return '[]'
+    parameters = currentProvisioningStep.parameters
     parameters = [parameter for parameter in parameters if parameter.hidden != True]
     return parameters
 
@@ -122,23 +127,30 @@ def sendParameters(cmd, deploymentId, parameters=None, parameterFile=None, subsc
     if parameters is not None and parameterFile is not None:
         raise CLIError("May not have parameters and a parameters file at the same time.")
     elif parameterFile is not None:
+        logger.info("Using parameter file: " + parameterFile)
         try:
             with open(parameterFile) as jsonfile:
                 parameters = json.load(jsonfile)
+            logger.info("Parameters loaded.")
         except IOError:
             raise CLIError("Could not open file.")
     elif parameters is not None:
+        logger.info("Using parameters from commandline argument.")
         validators.validate_sendParameters(cmd, parameters, subscription, deploymentId)
         parameters = json.loads(parameters)
+        logger.info("Parameters loaded.")
     else:
+        logger.info("No parameters received, building empty json body.")
         parameters = '{}'
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
+        logger.info("Using default subscription: " + subscription)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds, api.getEndpoint())
     try:
+        logger.info("Sending request.")
         response = ciqsapi.put_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId, parameters)
     except msrest.exceptions.HttpOperationError as e:
         message = e.response.json()
@@ -153,11 +165,13 @@ def viewDeployment(cmd, deploymentId, subscription=None):
     """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
+        logger.info("Using default subscription: " + subscription)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
     try:
+        logger.info("Sending request.")
         deployment = ciqsapi.get_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId)
     except msrest.exceptions.HttpOperationError as e:
         message = e.response.json()
@@ -191,11 +205,13 @@ def deleteDeployment(cmd, deploymentId, subscription=None):
     """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
+        logger.info("Using default subscription: " + subscription)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
     try:
+        logger.info("Sending request.")
         deleteResponse = ciqsapi.delete_api_deployments_by_subscription_id_by_deployment_id(subscription, deploymentId)
     except msrest.exceptions.HttpOperationError as e:
         message = e.response.json()
@@ -210,6 +226,8 @@ def waitForTerminalStatus(cmd, deploymentId, subscription=None, timeout=None):
     """
     import time
     if timeout is not None:
+        logger.info("Parsing timeout.")
+        #TODO: Validate that if the timeout exists that it is a float.
         timeout=float(timeout)
     start = time.time()
     status = viewDeploymentStatus(cmd, deploymentId, subscription=subscription)
@@ -217,8 +235,11 @@ def waitForTerminalStatus(cmd, deploymentId, subscription=None, timeout=None):
         if timeout is not None and time.time() - start > timeout:
             raise CLIError('Call timedout')
         try:
+            logger.info("Getting status...")
             status = viewDeploymentStatus(cmd, deploymentId, subscription=subscription)
+            logger.info("Status is " + status['status'])
         except CLIError:
+            logger.info("Could not find deployement, assume it is deleted.")
             status['status'] = 'deleted'
         time.sleep(5)
     return status
@@ -231,6 +252,7 @@ def listTemplates(cmd, solutionStorageConnectionString=None):
     """Lists templates from the gallery"""
     ciqsapi = ciqs_api.CiqsApi(None, base_url=api.getEndpoint())
     try:
+        logger.info("Sending request.")
         templates = ciqsapi.get_api_gallery(solution_storage_connection_string=solutionStorageConnectionString)
     except msrest.exceptions.HttpOperationError as e:
         message = e.response.json()
@@ -246,6 +268,7 @@ def getTemplate(cmd, templateId, solutionStorageConnectionString=None):
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
     try:
+        logger.info("Sending request.")
         template = ciqsapi.get_api_gallery_by_template_id(templateId, solution_storage_connection_string=solutionStorageConnectionString)
     except msrest.exceptions.HttpOperationError as e:
         message = e.response.json()
@@ -260,11 +283,13 @@ def listLocations(cmd, templateId, subscription=None, solutionStorageConnectionS
     """
     if subscription is None:
         subscription = get_subscription_id(cmd.cli_ctx)
+        logger.info("Using default subscription: " + subscription)
     profile = Profile(cli_ctx=cmd.cli_ctx)
     auth_token = profile.get_raw_token(subscription=subscription)
     creds = authentication.BasicTokenAuthentication({'access_token': auth_token[0][1]})
     ciqsapi = ciqs_api.CiqsApi(creds=creds, base_url=api.getEndpoint())
     try:
+        logger.info("Sending request.")
         locations = ciqsapi.get_api_locations_by_subscription_id_by_template_id(templateId, subscription, solution_storage_connection_string=solutionStorageConnectionString)
     except msrest.exceptions.HttpOperationError as e:
         message = e.response.json()
